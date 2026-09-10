@@ -3,10 +3,21 @@ import { Card } from "../components/Card"
 
 
 export default function Index(){
+
+const data= [];
+
   return(
     <View style={styles.container}> 
-      <Text>teste</Text>
-      <Card/>
+      <Text>test- cardápio</Text>
+      
+      <View >
+        {data.map(foodData=><Card/>)}
+
+      </View>
+      
+
+
+
     </View>
   )
 }
