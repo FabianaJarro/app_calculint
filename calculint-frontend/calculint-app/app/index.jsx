@@ -1,11 +1,9 @@
-import { Image, StyleSheet, Text, View, Pressable } from "react-native";
-import { useState } from "react";
+import {View} from "react-native"
 
-
-export default function App() {
-  return (
-    <View>
-      <Text>Calculint</Text>
+export default function Index(){
+  return(
+    <View> 
+      <Text>Home</Text>
     </View>
-  );
+  )
 }
