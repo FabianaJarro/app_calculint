@@ -1,16 +1,30 @@
-import { Image, StyleSheet } from "react-native"
+import { Image, StyleSheet, Text} from "react-native"
 
-export const Card = () => {
+interface CardProps{
+    price: number,
+    title: string,
+    image: string
+}
+
+export const Card = ({price, image, title}: CardProps)=>{
     return (
+        <>
         <Image
-            source={require("../../assets/images/kiki.jpg")}
+            source={require("../../app/assets/images/kiki.jpg")}
             style={styles.card}
         />
-
-
-
+        
+        <Text>{title}</Text>
+        <Text>valor: {price}</Text>
+        
+        </>
     )
 }
+
+//   ../       → components/
+//   ../../    → calculint-app/
+
+
 
 const styles = StyleSheet.create({
     card: {
@@ -19,7 +33,6 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 10,
         alignItems: "center",
-        shadowColor: "#000"
     },
     //camelCase object key
 

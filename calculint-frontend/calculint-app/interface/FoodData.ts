@@ -5,3 +5,5 @@ export interface FoodData{
     price: number
 
 }
+
+//molde de tipos? 
