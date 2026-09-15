@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text} from "react-native"
 
 interface CardProps{
-    price: number,
+    price: string,
     title: string,
     image: string
 }

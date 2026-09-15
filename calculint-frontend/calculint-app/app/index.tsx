@@ -1,29 +1,44 @@
-import {View, Image, StyleSheet, Text} from "react-native"
+import { View, Image, StyleSheet, Text, Pressable } from "react-native"
 import { Card } from "../components/Card"
 import { FoodData } from "../interface/FoodData";
 import { useFoodData } from "../hooks/useFoodData";
+import { useState } from "react"
+import { CreateModal } from "../components/CreateModal";
 
-export default function Index(){
+export default function Index() {
 
-// const data: FoodData[]=[];
-const {data} =useFoodData();
+  // const data: FoodData[]=[];
+  const { data } = useFoodData();
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const handleOpenModal=()=>{
+    setIsModalOpen(prev=>!prev)
+  }
 
 
-//uma contante chamada data que é um array do tipeo FoodData,começando vazio
-//const algumaCoisa: Tipo = valor;
+  //uma contante chamada data que é um array do tipeo FoodData,começando vazio
+  //const algumaCoisa: Tipo = valor;
 
-  return(
-    <View style={styles.container}> 
+  return (
+    <View style={styles.container}>
       <Text>test- cardápio</Text>
-      
+
       <View >
-        {data?.map(foodData=><Card 
-                                title={foodData.title}
-                                image={foodData.image}
-                                price={foodData.price}
-                                />)}
+        {data?.map((foodData )=> (<Card
+          key={foodData.id}
+          title={foodData.title}
+          image={foodData.image}
+          price={foodData.price}
+        />))}
 
       </View>
+      {isModalOpen && <CreateModal/>}
+      <Pressable onPress= {handleOpenModal}>
+        <Text>
+          novo
+        </Text>
+        
+      </Pressable>
     </View>
   )
 }
@@ -32,11 +47,11 @@ const {data} =useFoodData();
 
 
 
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    backgroundColor:"#FFF" ,
+    backgroundColor: "#FFF",
     gap: 80,
-    
+
   }
 
 
