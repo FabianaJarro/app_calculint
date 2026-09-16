@@ -16,7 +16,6 @@ export function useFoodDataMutate(){
         mutationFn: postData,
         retry: 2,
         onSuccess:()=>{
-
             queryClient.invalidateQueries({
                 queryKey: ["food-data"]
             })

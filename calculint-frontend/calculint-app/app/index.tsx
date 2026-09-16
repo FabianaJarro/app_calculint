@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet, Text, Pressable } from "react-native"
+import { View, Image, StyleSheet, Text, Pressable, ScrollView } from "react-native"
 import { Card } from "../components/Card"
 import { FoodData } from "../interface/FoodData";
 import { useFoodData } from "../hooks/useFoodData";
@@ -23,7 +23,7 @@ export default function Index() {
     <View style={styles.container}>
       <Text>test- cardápio</Text>
 
-      <View >
+      <ScrollView style={styles.scroll}>
         {data?.map((foodData )=> (<Card
           key={foodData.id}
           title={foodData.title}
@@ -31,7 +31,7 @@ export default function Index() {
           price={foodData.price}
         />))}
 
-      </View>
+      </ScrollView>
       {isModalOpen && <CreateModal/>}
       <Pressable onPress= {handleOpenModal}>
         <Text>
@@ -52,7 +52,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
     gap: 80,
 
-  }
+  },
+
+  scroll: {
+    flex: 1,
+    width: "100%",
+  },
 
 
 })

@@ -38,8 +38,6 @@ export function CreateModal() {
             image
         }
 
-        
-
         mutate(foodData)
     }
 
