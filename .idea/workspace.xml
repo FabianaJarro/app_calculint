@@ -7,8 +7,7 @@
     <list default="true" id="96a3ba19-d51c-4a7a-a771-559ac266dc2a" name="Changes" comment="">
       <change afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/CreateModal/index.tsx" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodDataMutate.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/app/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/Card/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/Card/index.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodData.ts" afterDir="false" />
