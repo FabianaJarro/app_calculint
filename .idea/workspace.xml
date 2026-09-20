@@ -4,7 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="96a3ba19-d51c-4a7a-a771-559ac266dc2a" name="Changes" comment="" />
+    <list default="true" id="96a3ba19-d51c-4a7a-a771-559ac266dc2a" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/CreateModal/index.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodDataMutate.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/app/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/app/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/Card/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/components/Card/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/hooks/useFoodData.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/calculint-frontend/calculint-app/interface/FoodData.ts" beforeDir="false" afterPath="$PROJECT_DIR$/calculint-frontend/calculint-app/interface/FoodData.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,7 +69,7 @@
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;
   }
 }</component>
