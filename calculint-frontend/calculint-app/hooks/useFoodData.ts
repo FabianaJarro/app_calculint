@@ -6,6 +6,7 @@ const API_URL="http://localhost:8080"
 
 const fetchData=async (): AxiosPromise<FoodData[]>=>{
     const response =  axios.get(API_URL+"/food")
+    //a promise que a  resposta dessa requisição seja uma lista de coisas que tenham o formato FoodData. (o interface)
 
     return response; 
 }
@@ -22,5 +23,7 @@ export function useFoodData(){
          data: query.data?.data
     }
 }
+
+//função que faz uma requisição dos Food (Foods que vem da API)
 
 //query?

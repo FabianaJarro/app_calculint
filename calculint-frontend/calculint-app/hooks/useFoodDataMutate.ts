@@ -21,7 +21,7 @@ export function useFoodDataMutate(){
             })
         }
     });
-
+//função que cadastra um Food
     return mutate
 }
 

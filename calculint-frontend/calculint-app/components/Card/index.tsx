@@ -6,7 +6,7 @@ interface CardProps {
     image: string
 }
 
-export const Card = ({ price, image, title }: CardProps) => {
+export const Card = ({ title, price, image}: CardProps) => {
     return (
         <View style={styles.card}>
             {/* <Image
