@@ -2,7 +2,7 @@ package br.edu.ifsp.calculint.controller;
 
 import br.edu.ifsp.calculint.dto.FoodRequestDTO;
 import br.edu.ifsp.calculint.dto.FoodResponseDTO;
-import br.edu.ifsp.calculint.food.Food;
+import br.edu.ifsp.calculint.model.Food;
 import br.edu.ifsp.calculint.repository.FoodRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;

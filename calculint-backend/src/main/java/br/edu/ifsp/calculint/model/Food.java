@@ -1,4 +1,4 @@
-package br.edu.ifsp.calculint.food;
+package br.edu.ifsp.calculint.model;
 
 import lombok.*;
 import br.edu.ifsp.calculint.dto.FoodRequestDTO;
