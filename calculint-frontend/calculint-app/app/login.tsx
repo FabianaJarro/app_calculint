@@ -1,24 +1,32 @@
 import { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { useLogin } from "../hooks/useLogin";
+
 
 export default function Login() {
+
+  const { login, loading, error } = useLogin();
+
   const router = useRouter();
 
-  const [usuario, setUsuario] = useState("");
-  const [senha, setSenha] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  function continuarLogin() {
-    // Por enquanto, apenas mostra os valores.
-    // Depois vamos trocar isso pela chamada ao seu backend.
-    console.log("Usuário:", usuario);
-    console.log("Senha:", senha);
+  async function continuarLogin() {
+    try {
+      const data = await login({ email, password } //pq tem que ficar entre chaves?
+      );
+
+      if (data) {
+        console.log("Nome:", data.name);
+        console.log("Token:", data.token);
+
+        router.push("/");
+      }
+    }catch (error){
+      console.log("erro no login", error)
+    }
   }
 
   return (
@@ -30,12 +38,12 @@ export default function Login() {
           Acesse sua conta{"\n"}no Calculint!
         </Text>
 
-        <Text style={styles.label}>Usuário</Text>
+        <Text style={styles.label}>Email</Text>
         <TextInput
           style={styles.input}
           placeholder="Digite seu usuário..."
-          value={usuario}
-          onChangeText={setUsuario}
+          value={email}
+          onChangeText={setEmail}
           autoCapitalize="none"
         />
 
@@ -43,8 +51,8 @@ export default function Login() {
         <TextInput
           style={styles.input}
           placeholder="Digite sua senha..."
-          value={senha}
-          onChangeText={setSenha}
+          value={password}
+          onChangeText={setPassword}
           secureTextEntry
         />
 
