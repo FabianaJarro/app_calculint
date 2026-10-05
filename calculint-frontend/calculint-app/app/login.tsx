@@ -22,7 +22,7 @@ export default function Login() {
         console.log("Nome:", data.name);
         console.log("Token:", data.token);
 
-        router.push("/");
+        router.push("/inicio");
       }
     }catch (error){
       console.log("erro no login", error)
