@@ -1,0 +1,10 @@
+inicio (registre-se)
+//a imagem (logo) não está lá, temos que colocá-la.
+
+
+página do Login
+//ao fazer login (no celular), especicamente no campo da senha, não é possível exergar sua senha pois a caixa do teclado cobre-a
+//poderia dar para subir a tela para podermos ver direito a senha digitada.
+
+
+

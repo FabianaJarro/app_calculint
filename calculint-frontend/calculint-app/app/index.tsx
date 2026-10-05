@@ -5,29 +5,28 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Index() {
 
-  const router = useRouter();
+    const router = useRouter();
 
-  useEffect(() => {
+    useEffect(() => {
+        async function verificarLogin() {
 
-    async function verificarLogin() {
+            const token = await AsyncStorage.getItem("token");
 
-      const token = await AsyncStorage.getItem("token");
+            if (token) {
+                router.replace("/inicio");
+            } else {
+                router.replace("/login");
+            }
 
-      if (token) {
-        router.replace("/inicio");
-      } else {
-        router.replace("/login");
-      }
+        }
 
-    }
+        verificarLogin();
 
-    verificarLogin();
+    }, []);
 
-  }, []);
-
-  return (
-    <View>
-      <ActivityIndicator />
-    </View>
-  );
+    return (
+        <View>
+            <ActivityIndicator />
+        </View>
+    );
 }

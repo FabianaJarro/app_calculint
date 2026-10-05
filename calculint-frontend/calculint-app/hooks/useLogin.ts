@@ -1,7 +1,6 @@
 
 import { LoginResponse } from "../types/LoginResponse";
 import { LoginRequest } from "../types/LoginRequest";
-import { AxiosPromise } from "axios";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -10,7 +9,7 @@ const API_URL = "http://localhost:8080";
 
 
 const postData = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await axios.post(API_URL + "/auth/login", data)
+  const response = await axios.post<LoginResponse>(API_URL + "/auth/login", data)
   return response.data;
 }
 
