@@ -1,6 +1,5 @@
 import { View, Image, StyleSheet, Text, Pressable, ScrollView } from "react-native"
 import { Card } from "../components/Card"
-import { FoodData } from "../interface/FoodData";
 import { useFoodData } from "../hooks/useFoodData";
 import { useState } from "react"
 import { CreateModal } from "../components/CreateModal";

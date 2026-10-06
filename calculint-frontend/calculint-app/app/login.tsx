@@ -28,6 +28,7 @@ export default function Login() {
         
         await AsyncStorage.setItem("name", data.name);
         await AsyncStorage.setItem("token", data.token);
+        //
         //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
 
         router.push("/inicio");
