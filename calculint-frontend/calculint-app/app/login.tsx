@@ -31,7 +31,7 @@ export default function Login() {
         //
         //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
 
-        router.push("/inicio");
+        router.replace("/inicio");
       }
     } catch (error) {
       console.log("erro no login", error)
