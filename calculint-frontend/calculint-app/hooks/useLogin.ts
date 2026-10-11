@@ -3,9 +3,7 @@ import { LoginResponse } from "../types/LoginResponse";
 import { LoginRequest } from "../types/LoginRequest";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-
-
-const API_URL = "http://localhost:8080";
+import { API_URL } from "../api";
 
 
 const postData = async (data: LoginRequest): Promise<LoginResponse> => {

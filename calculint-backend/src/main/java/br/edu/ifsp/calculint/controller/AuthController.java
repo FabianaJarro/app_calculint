@@ -1,9 +1,9 @@
 package br.edu.ifsp.calculint.controller;
 
 
-import br.edu.ifsp.calculint.dto.LoginRequestDTO;
-import br.edu.ifsp.calculint.dto.LoginResponseDTO;
-import br.edu.ifsp.calculint.dto.RegisterRequestDTO;
+import br.edu.ifsp.calculint.dto.auth.LoginRequestDTO;
+import br.edu.ifsp.calculint.dto.auth.LoginResponseDTO;
+import br.edu.ifsp.calculint.dto.auth.RegisterRequestDTO;
 import br.edu.ifsp.calculint.infra.security.TokenService;
 import br.edu.ifsp.calculint.model.User;
 import br.edu.ifsp.calculint.repository.UserRepository;

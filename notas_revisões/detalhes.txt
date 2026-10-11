@@ -1,5 +1,7 @@
+
+Front-end
 inicio (registre-se)
-//a imagem (logo) não está lá, temos que colocá-la.
+//a imagem (logo) não está lá, temos que colocá-la. (feito)
 
 
 página do Login
@@ -7,4 +9,26 @@ página do Login
 //poderia dar para subir a tela para podermos ver direito a senha digitada.
 
 
+Back-End
+//um email deve ser único
 
+//No springSecurity, é melhor trocar meu subject (email) para o ID do usuario
+
+//configurar o erro de um email ou senha incorretos
+
+
+
+
+
+
+adriano
+
+aplication-preperties-local: criar sua senha
+
+api.security.token.secret=senha
+
+//
+no front:
+hostname
+EXPO_PUBLIC_API_URL=http://teu-IP:8080
+criar o arquivo: .env.local

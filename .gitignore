@@ -1,3 +1,4 @@
 notas
 .idea/
 .vscode/
+.env.local
