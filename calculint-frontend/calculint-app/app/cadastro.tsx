@@ -9,121 +9,129 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import { useRouter } from "expo-router";
+import { useCadastro } from "../hooks/useCadastro";
+
+
 
 export default function Cadastro() {
   const router = useRouter();
-  const [nome, setNome] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [usuario, setUsuario] = useState("");
-  const [senha, setSenha] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmacaoSenha, setConfirmacaoSenha] = useState("");
 
-  function continuarCadastro() {
-    router.replace("/login");
+  const { cadastro, loading, error } = useCadastro();
+
+  async function continuarCadastro() {
+    try {
+      await cadastro({
+        name,
+        email,
+        password,
+      });
+
+      console.log("Cadastro realizado!");
+      router.push("/login");
+
+    } catch (error) {
+      console.log("Erro ao cadastrar:", error);
+    }
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.topo} />
 
-      <KeyboardAvoidingView
-        style={styles.areaFormulario}
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
+return (
+  <View style={styles.container}>
+    <View style={styles.topo} />
+
+    <KeyboardAvoidingView
+      style={styles.areaFormulario}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+    >
+      <ScrollView
+        contentContainerStyle={styles.conteudo}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <ScrollView
-          contentContainerStyle={styles.conteudo}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+        <Text style={styles.titulo}>Crie sua conta no Calculint! É grátis!</Text>
+
+        <View style={styles.campo}>
+          <Text style={styles.label}>Nome</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu nome..."
+            placeholderTextColor="#29262B"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+            returnKeyType="next"
+          />
+        </View>
+
+        <View style={styles.campo}>
+          <Text style={styles.label}>E-mail</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu E-mail..."
+            placeholderTextColor="#29262B"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            returnKeyType="next"
+          />
+        </View>
+
+
+        <View style={styles.campo}>
+          <Text style={styles.label}>Senha</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Crie uma senha..."
+            placeholderTextColor="#29262B"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            returnKeyType="next"
+          />
+        </View>
+
+        <View style={styles.campo}>
+          <Text style={styles.label}>Senha</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirme a senha..."
+            placeholderTextColor="#29262B"
+            value={confirmacaoSenha}
+            onChangeText={setConfirmacaoSenha}
+            secureTextEntry
+            returnKeyType="done"
+            onSubmitEditing={continuarCadastro}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={styles.botao}
+          onPress={continuarCadastro}
+          activeOpacity={0.8}
         >
-          <Text style={styles.titulo}>Crie sua conta no Calculint! É grátis!</Text>
+          <Text style={styles.textoBotao}>Avançar</Text>
+        </TouchableOpacity>
 
-          <View style={styles.campo}>
-            <Text style={styles.label}>Nome</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite seu nome..."
-              placeholderTextColor="#29262B"
-              value={nome}
-              onChangeText={setNome}
-              autoCapitalize="words"
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.campo}>
-            <Text style={styles.label}>E-mail</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Digite seu E-mail..."
-              placeholderTextColor="#29262B"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.campo}>
-            <Text style={styles.label}>Usuário</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Crie um Usuário..."
-              placeholderTextColor="#29262B"
-              value={usuario}
-              onChangeText={setUsuario}
-              autoCapitalize="none"
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.campo}>
-            <Text style={styles.label}>Senha</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Crie uma senha..."
-              placeholderTextColor="#29262B"
-              value={senha}
-              onChangeText={setSenha}
-              secureTextEntry
-              returnKeyType="next"
-            />
-          </View>
-
-          <View style={styles.campo}>
-            <Text style={styles.label}>Senha</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Confirme a senha..."
-              placeholderTextColor="#29262B"
-              value={confirmacaoSenha}
-              onChangeText={setConfirmacaoSenha}
-              secureTextEntry
-              returnKeyType="done"
-              onSubmitEditing={continuarCadastro}
-            />
-          </View>
-
-          <TouchableOpacity
-            style={styles.botao}
-            onPress={continuarCadastro}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.textoBotao}>Avançar</Text>
-          </TouchableOpacity>
-
-          <Text style={styles.textoLogin}>
-            Já possui uma conta?{" "}
-            <Text style={styles.link} onPress={() => router.push("/login")}>
-              Clique aqui e faça Login
-            </Text>
+        <Text style={styles.textoLogin}>
+          Já possui uma conta?{" "}
+          <Text style={styles.link} onPress={() => router.push("/login")}>
+            Clique aqui e faça Login
           </Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </View>
-  );
+        </Text>
+      </ScrollView>
+    </KeyboardAvoidingView>
+  </View>
+);
+
 }
+
 
 const styles = StyleSheet.create({
   container: {

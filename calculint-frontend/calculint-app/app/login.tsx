@@ -2,15 +2,16 @@ import { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useLogin } from "../hooks/useLogin";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../contexts/auth";
 
 
 export default function Login() {
 
+  const { usuario, carregando } = useAuth();
+  const { entrar } = useAuth();
+
   const { login, loading, error } = useLogin();
-
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,19 +20,20 @@ export default function Login() {
 
   async function continuarLogin() {
     try {
-      const data = await login({ email, password } //pq tem que ficar entre chaves?
-      );
+      const data = await login({ email, password }) //pq tem que ficar entre chaves?
 
       if (data) {
-        console.log("Nome:", data.name);
+        console.log("Name:", data.name);
         console.log("Token:", data.token);
-        
-        await AsyncStorage.setItem("name", data.name);
-        await AsyncStorage.setItem("token", data.token);
-        //
-        //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
+
+        await entrar({
+          name: data.name,
+          token: data.token,
+        });
 
         router.replace("/inicio");
+        //
+        //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
       }
     } catch (error) {
       console.log("erro no login", error)

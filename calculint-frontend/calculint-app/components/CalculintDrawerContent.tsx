@@ -1,22 +1,25 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  DrawerContentScrollView,
-  DrawerItem,
-  type DrawerContentComponentProps,
-} from "expo-router/drawer";
-import { useEffect, useState } from "react";
+import { DrawerContentScrollView, DrawerItem, type DrawerContentComponentProps, } from "expo-router/drawer";
 import { StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../contexts/auth";
+import { useRouter } from "expo-router";
 
-export default function CalculintDrawerContent(
-  props: DrawerContentComponentProps,
-) {
-  const [name, setName] = useState("");
 
-  useEffect(() => {
-    AsyncStorage.getItem("name").then((savedName) => {
-      if (savedName) setName(savedName);
-    });
-  }, []);
+export default function CalculintDrawerContent(props: DrawerContentComponentProps) {
+  const { usuario } = useAuth();
+  const name = usuario?.name ?? "";
+
+  const router = useRouter();
+  const { sair } = useAuth();
+
+  async function fazerLogout() {
+    try {
+      await sair();
+      router.replace("/registre_se");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  }
+
 
   function abrirEmBreve(section: string) {
     props.navigation.navigate("em-breve", { section });
@@ -89,8 +92,10 @@ export default function CalculintDrawerContent(
         <View style={styles.divider} />
         <DrawerItem
           label="Sair"
-          icon={({ color }) => <Text style={[styles.icon, { color }]}>↪</Text>}
-          onPress={() => props.navigation.navigate("logout")}
+          icon={({ color }) => (
+            <Text style={[styles.icon, { color }]}>↪</Text>
+          )}
+          onPress={fazerLogout}
           inactiveTintColor="#43566A"
           labelStyle={styles.label}
         />

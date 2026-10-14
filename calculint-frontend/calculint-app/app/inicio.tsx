@@ -1,13 +1,8 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useAuth } from "../contexts/auth"
 
 const niveis = [
   {
@@ -37,14 +32,10 @@ const niveis = [
 ];
 
 export default function Inicio() {
-  const router = useRouter();
-  const [name, setName] = useState("");
+  const router = useRouter()
 
-  useEffect(() => {
-    AsyncStorage.getItem("name").then((nomeSalvo) => {
-      if (nomeSalvo) setName(nomeSalvo);
-    });
-  }, []);
+  const { usuario } = useAuth()
+  const name = usuario?.name ?? ""
 
   function escolherNivel(nivel: string) {
     router.push({ pathname: "/operacoes", params: { nivel } });

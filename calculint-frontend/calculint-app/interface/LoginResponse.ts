@@ -1,4 +1,4 @@
-export type LoginResponse={
+export interface LoginResponse{
     name: string,
     token: string
     

@@ -2,34 +2,43 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Drawer } from "expo-router/drawer";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import CalculintDrawerContent from "../components/CalculintDrawerContent";
+import { AuthProvider } from "../contexts/auth";
 
 const queryClient = new QueryClient();
 
 export default function Layout() {
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <Drawer
           drawerContent={(props) => <CalculintDrawerContent {...props} />}
+
           screenOptions={{
             headerStyle: {
               backgroundColor: "#99D1D3",
             },
+
             headerTintColor: "#263F50",
+
             headerTitleStyle: {
               color: "#263F50",
               fontWeight: "700",
             },
+
             drawerStyle: {
               backgroundColor: "#FFFFFF",
             },
+
             drawerActiveTintColor: "#D96E2A",
             drawerInactiveTintColor: "#43566A",
             drawerActiveBackgroundColor: "#FFF1E8",
+
             drawerLabelStyle: {
               fontSize: 15,
               fontWeight: "500",
             },
+
           }}
         >
           <Drawer.Screen
@@ -67,10 +76,6 @@ export default function Layout() {
             }}
           />
           <Drawer.Screen
-            name="logout"
-            options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
-          />
-          <Drawer.Screen
             name="indexTeste"
             options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
           />
@@ -84,6 +89,7 @@ export default function Layout() {
           />
         </Drawer>
       </GestureHandlerRootView>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

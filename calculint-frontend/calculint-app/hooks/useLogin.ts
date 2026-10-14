@@ -1,12 +1,12 @@
 
-import { LoginResponse } from "../types/LoginResponse";
-import { LoginRequest } from "../types/LoginRequest";
+import { LoginResponse } from "../interface/LoginResponse";
+import { LoginRequest } from "../interface/LoginRequest";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../api";
 
 
-const postData = async (data: LoginRequest): Promise<LoginResponse> => {
+const postlogin = async (data: LoginRequest): Promise<LoginResponse> => {
   const response = await axios.post(API_URL + "/auth/login", data)
   return response.data;
 }
@@ -14,7 +14,7 @@ const postData = async (data: LoginRequest): Promise<LoginResponse> => {
 
 export function useLogin() {
   const mutate = useMutation({
-    mutationFn: postData,
+    mutationFn: postlogin,
   });
   //
   return {

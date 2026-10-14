@@ -1,30 +1,30 @@
 
 Front-end
-inicio (registre-se)
+inicio (registre-se) (feito)
 //a imagem (logo) não está lá, temos que colocá-la. (feito)
 
 
 página do Login
-//ao fazer login (no celular), especicamente no campo da senha, não é possível exergar sua senha pois a caixa do teclado cobre-a
+//ao fazer login (no celular), especicamente no campo da senha, não é possível enxergar sua senha pois a caixa do teclado cobre-a
 //poderia dar para subir a tela para podermos ver direito a senha digitada.
 
 
 Back-End
-//um email deve ser único
 
 //No springSecurity, é melhor trocar meu subject (email) para o ID do usuario
 
-//configurar o erro de um email ou senha incorretos
+//configurar validação (jakarta validation)
+
+
+Detalhes
 
 
 
 
 
-
-adriano
+//adriano
 
 aplication-preperties-local: criar sua senha
-
 api.security.token.secret=senha
 
 //

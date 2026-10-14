@@ -1,32 +1,35 @@
+
 import { useEffect } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuth } from "../contexts/auth";
 
 export default function Index() {
+  const router = useRouter();
+  const { usuario, carregando } = useAuth();
 
-    const router = useRouter();
+  useEffect(() => {
+    if (carregando) return;
 
-    useEffect(() => {
-        async function verificarLogin() {
+    if (usuario) {
+      router.replace("/inicio");
+    } else {
+      router.replace("/registre_se");
+    }
+  }, [carregando, usuario, router]);
 
-            const token = await AsyncStorage.getItem("token");
-
-            if (token) {
-                router.replace("/inicio");
-            } else {
-                router.replace("/login");
-            }
-
-        }
-
-        verificarLogin();
-
-    }, []);
-
-    return (
-        <View>
-            <ActivityIndicator />
-        </View>
-    );
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#99D1D3" />
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
