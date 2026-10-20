@@ -19,4 +19,16 @@ public class User {
     private String name;
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "nivel_atual", nullable = true)
+    private Nivel nivelAtual;
+
+    public Nivel getNivelAtual() {
+        return nivelAtual;
+    }
+
+    public void setNivelAtual(Nivel nivelAtual) {
+        this.nivelAtual = nivelAtual;
+    }
 }

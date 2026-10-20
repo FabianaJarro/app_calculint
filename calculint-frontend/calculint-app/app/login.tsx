@@ -15,7 +15,6 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-
   //
 
   async function continuarLogin() {
@@ -25,10 +24,12 @@ export default function Login() {
       if (data) {
         console.log("Name:", data.name);
         console.log("Token:", data.token);
+        console.log("nivel atual: ", data.nivelAtual)
 
         await entrar({
           name: data.name,
           token: data.token,
+          nivelAtual: data.nivelAtual
         });
 
         router.replace("/inicio");

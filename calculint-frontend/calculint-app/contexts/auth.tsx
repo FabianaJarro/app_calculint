@@ -1,23 +1,19 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-
-type Usuario = {
-  name: string;
-  token: string;
-};
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import type { LoginResponse } from "../interface/LoginResponse";
 
 type AuthContextType = {
-  usuario: Usuario | null;
+  usuario: LoginResponse| null;
   carregando: boolean;
-  entrar: (dados: Usuario) => Promise<void>;
+  entrar: (dados: LoginResponse) => Promise<void>;
   sair: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  const [usuario, setUsuario] = useState<LoginResponse | null>(null);
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
@@ -25,15 +21,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function carregarSessao() {
       try {
-        const [token, name] = await AsyncStorage.multiGet([
+        const [token, name, nivelAtual] = await AsyncStorage.multiGet([
           "token",
           "name",
+          "nivelAtual"
         ]);
+
+        const nivelSalvo = nivelAtual[1];//
 
         if (ativo && token[1] && name[1]) {
           setUsuario({
             token: token[1],
             name: name[1],
+            nivelAtual: nivelSalvo === "BASICO" || nivelSalvo === "INTERMEDIARIO" || nivelSalvo === "AVANCADO" ? nivelSalvo : null,
           });
         }
       } catch (error) {
@@ -56,11 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await AsyncStorage.multiSet([
       ["token", dados.token],
       ["name", dados.name],
+      ["nivelAtual", dados.nivelAtual ?? ""] //
     ]);
 
     setUsuario({
       token: dados.token,
       name: dados.name,
+      nivelAtual: dados.nivelAtual
     });
   }, []);
 
@@ -68,7 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // limpa a interface
     setUsuario(null);
 
-    await AsyncStorage.multiRemove(["token", "name"]);
+    await AsyncStorage.multiRemove(["token", "name", "nivelAtual"]);
   }, []);
 
   return (

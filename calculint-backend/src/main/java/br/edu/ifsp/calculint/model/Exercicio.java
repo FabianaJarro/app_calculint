@@ -1,43 +1,40 @@
+
 package br.edu.ifsp.calculint.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "exercicio")
 public class Exercicio {
 
-    private String titulo;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_exercicio")
+    private Long id;
 
-    private String descricao;
+    @Column(nullable = false, length = 500)
+    private String enunciado;
 
-    private String resposta;
+    @Column(nullable = false)
+    private String tipo;
 
-    public void setResposta(String resposta) {
-        this.resposta = resposta;
+    public Long getId() {
+        return id;
     }
 
-    public String getResposta() {
-        return resposta;
+    public String getEnunciado() {
+        return enunciado;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public void setEnunciado(String enunciado) {
+        this.enunciado = enunciado;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public String getTipo() {
+        return tipo;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public boolean naoTemResposta(){
-        return resposta == null || resposta.trim().length() < 1;
-    }
-
-    public boolean isValido(){
-        return titulo != null && descricao != null;
-    }
-
 }

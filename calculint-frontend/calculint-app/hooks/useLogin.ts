@@ -7,11 +7,11 @@ import { API_URL } from "../api";
 
 
 const postlogin = async (data: LoginRequest): Promise<LoginResponse> => {
-  const response = await axios.post(API_URL + "/auth/login", data)
+  const response = await axios.post<LoginResponse >(API_URL + "/auth/login", data)
   return response.data;
 }
 
-
+// porque <>
 export function useLogin() {
   const mutate = useMutation({
     mutationFn: postlogin,
