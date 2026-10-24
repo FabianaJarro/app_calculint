@@ -11,10 +11,21 @@ export default function Index() {
   useEffect(() => {
     if (carregando) return;
 
-    if (usuario) {
-      router.replace("/inicio");
-    } else {
+    if (!usuario) {
       router.replace("/registre_se");
+      return;
+    }
+
+    if (usuario.nivelAtual) {
+      const rotas = {
+        BASICO: "/operacoes?nivel=basico",
+        INTERMEDIARIO: "/operacoes?nivel=intermediario",
+        AVANCADO: "/operacoes?nivel=avancado",
+      } as const;
+
+      router.replace(rotas[usuario.nivelAtual]);
+    } else {
+      router.replace("/selecionar_nivel");
     }
   }, [carregando, usuario, router]);
 

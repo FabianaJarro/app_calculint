@@ -1,16 +1,27 @@
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
+
 import type { LoginResponse } from "../interface/LoginResponse";
+import { configurarToken, removerToken } from "../api";
 
 type AuthContextType = {
-  usuario: LoginResponse| null;
+  usuario: LoginResponse | null;
   carregando: boolean;
   entrar: (dados: LoginResponse) => Promise<void>;
   sair: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [usuario, setUsuario] = useState<LoginResponse | null>(null);
@@ -21,20 +32,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     async function carregarSessao() {
       try {
-        const [token, name, nivelAtual] = await AsyncStorage.multiGet([
-          "token",
-          "name",
-          "nivelAtual"
-        ]);
+        const [tokenItem, nameItem, nivelItem] =
+          await AsyncStorage.multiGet([
+            "token",
+            "name",
+            "nivelAtual",
+          ]);
 
-        const nivelSalvo = nivelAtual[1];//
+        const token = tokenItem[1];
+        const name = nameItem[1];
+        const nivelSalvo = nivelItem[1];
 
-        if (ativo && token[1] && name[1]) {
+        if (ativo && token && name) {
+          const nivelAtual =
+            nivelSalvo === "BASICO" ||
+            nivelSalvo === "INTERMEDIARIO" ||
+            nivelSalvo === "AVANCADO"
+              ? nivelSalvo
+              : null;
+
+          configurarToken(token);
+
           setUsuario({
-            token: token[1],
-            name: name[1],
-            nivelAtual: nivelSalvo === "BASICO" || nivelSalvo === "INTERMEDIARIO" || nivelSalvo === "AVANCADO" ? nivelSalvo : null,
+            token,
+            name,
+            nivelAtual,
           });
+        } else {
+          removerToken();
         }
       } catch (error) {
         console.error("Erro ao carregar sessão:", error);
@@ -52,25 +77,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const entrar = useCallback(async (dados: Usuario) => {
+  const entrar = useCallback(async (dados: LoginResponse) => {
     await AsyncStorage.multiSet([
       ["token", dados.token],
       ["name", dados.name],
-      ["nivelAtual", dados.nivelAtual ?? ""] //
+      ["nivelAtual", dados.nivelAtual ?? ""],
     ]);
+
+    configurarToken(dados.token);
 
     setUsuario({
       token: dados.token,
       name: dados.name,
-      nivelAtual: dados.nivelAtual
+      nivelAtual: dados.nivelAtual,
     });
   }, []);
 
   const sair = useCallback(async () => {
-    // limpa a interface
+    removerToken();
     setUsuario(null);
 
-    await AsyncStorage.multiRemove(["token", "name", "nivelAtual"]);
+    await AsyncStorage.multiRemove([
+      "token",
+      "name",
+      "nivelAtual",
+    ]);
   }, []);
 
   return (
@@ -86,7 +117,9 @@ export function useAuth() {
   const contexto = useContext(AuthContext);
 
   if (!contexto) {
-    throw new Error("useAuth deve ser usado dentro de AuthProvider.");
+    throw new Error(
+      "useAuth deve ser usado dentro de AuthProvider."
+    );
   }
 
   return contexto;

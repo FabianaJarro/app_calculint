@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     },
 
     cenario: {
-        ...StyleSheet.absoluteFillObject,
+        ...StyleSheet.absoluteFill,
         opacity: 0.75,
     },
 

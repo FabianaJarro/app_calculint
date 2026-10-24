@@ -6,8 +6,6 @@ import { useAuth } from "../contexts/auth";
 
 
 export default function Login() {
-
-  const { usuario, carregando } = useAuth();
   const { entrar } = useAuth();
 
   const { login, loading, error } = useLogin();
@@ -19,7 +17,7 @@ export default function Login() {
 
   async function continuarLogin() {
     try {
-      const data = await login({ email, password }) //pq tem que ficar entre chaves?
+      const data = await login({ email, password })
 
       if (data) {
         console.log("Name:", data.name);
@@ -32,7 +30,7 @@ export default function Login() {
           nivelAtual: data.nivelAtual
         });
 
-        router.replace("/inicio");
+        router.replace("/selecionar_nivel");
         //
         //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
       }
@@ -68,7 +66,7 @@ export default function Login() {
           secureTextEntry
         />
 
-        <TouchableOpacity style={styles.botao} onPress={continuarLogin}>
+        <TouchableOpacity style={[styles.botao, loading && { opacity: 0.6 }]} onPress={continuarLogin}>
           <Text style={styles.textoBotao}>Avançar</Text>
         </TouchableOpacity>
 

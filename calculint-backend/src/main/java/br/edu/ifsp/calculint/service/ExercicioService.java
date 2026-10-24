@@ -1,26 +1,21 @@
-//package br.edu.ifsp.calculint.service;
-//
-//import br.edu.ifsp.calculint.model.Exercicio;
-//import br.edu.ifsp.calculint.repository.ExercicioRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class ExercicioService {
-//
-//    private ExercicioRepository exercicioRepository;
-//
-//    @Autowired
-//    public void setExercicioRepository(ExercicioRepository exercicioRepository) {
-//        this.exercicioRepository = exercicioRepository;
-//    }
+package br.edu.ifsp.calculint.service;
 
-//    public void salvar(Exercicio exercicio){
-//        if(exercicio.naoTemResposta()){
-//            throw new IllegalArgumentException("exercio sem resposta");
-//        }
-//        if(exercicio.isValido()){
-//            exercicioRepository.sa
-//        }
-//    }
-//}
+import org.springframework.stereotype.Service;
+import java.util.Random;
+
+@Service
+public class ExercicioService {
+
+    private final Random random = new Random();
+
+    public int gerarNumero(int minimo, int maximo) {
+        return random.nextInt(maximo - minimo + 1) + minimo; //
+    }
+
+    public String gerarAdicao() {
+        int numero1 = gerarNumero(1, 10);
+        int numero2 = gerarNumero(1, 10);
+
+        return "Quanto é " + numero1 + " + " + numero2 + "?";
+    }
+}

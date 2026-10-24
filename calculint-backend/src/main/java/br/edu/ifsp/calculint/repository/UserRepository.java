@@ -9,4 +9,8 @@ public interface UserRepository extends JpaRepository <User, String>{
     Optional<User> findByEmail(String email);
 
 }
+
+
+
+
 //entidade que o usario vai manipular e o tipo do Id em <>

@@ -16,7 +16,7 @@ export const api = axios.create({
 });
 
 export function configurarToken(token: string) {
-  api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  api.defaults.headers.common.Authorization = `Bearer ${token}`; //
 }
 
 export function removerToken() {
