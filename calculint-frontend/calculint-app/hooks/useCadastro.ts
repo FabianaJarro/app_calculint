@@ -1,11 +1,10 @@
 
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { RegisterRequest } from "../interface/RegisterRequest";
-import { API_URL } from "../api";
+import { api } from "../api";
 
 const postCadastro =async (data: RegisterRequest) : Promise<void> =>  {
-  const response = await axios.post(API_URL+ "/auth/register", data )
+  const response = await api.post("/auth/register", data )
   return response.data;
 }
 

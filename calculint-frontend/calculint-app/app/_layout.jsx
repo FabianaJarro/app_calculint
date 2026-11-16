@@ -58,15 +58,23 @@ export default function Layout() {
             options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
           />
           <Drawer.Screen
-            name="inicio"
-            options={{ title: "Calculint", drawerLabel: "Página Inicial" }}
-          />
-          <Drawer.Screen
             name="operacoes"
             options={{
               title: "Operações",
               drawerItemStyle: { display: "none" },
             }}
+          />
+          <Drawer.Screen
+            name="selecionar_nivel"
+            options={{
+              headerShown: true,
+              title: "Escolher nível",
+              drawerItemStyle: { display: "none" },
+            }}
+          />
+          <Drawer.Screen
+            name="perfil"
+            options={{ title: "Editar perfil", drawerItemStyle: { display: "none" } }}
           />
           <Drawer.Screen
             name="em-breve"
@@ -81,6 +89,18 @@ export default function Layout() {
           />
           <Drawer.Screen
             name="exercicio"
+            options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
+          />
+          <Drawer.Screen
+            name="basico"
+            options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
+          />
+          <Drawer.Screen
+            name="intermediario"
+            options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
+          />
+          <Drawer.Screen
+            name="avancado"
             options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
           />
           <Drawer.Screen

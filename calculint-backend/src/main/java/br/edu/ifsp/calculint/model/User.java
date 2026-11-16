@@ -20,6 +20,12 @@ public class User {
     private String email;
     private String password;
 
+    @Column(nullable = true)
+    private Integer idade;
+
+    @Column(length = 80, nullable = true)
+    private String escolaridade;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "nivel_atual", nullable = true)
     private Nivel nivelAtual;

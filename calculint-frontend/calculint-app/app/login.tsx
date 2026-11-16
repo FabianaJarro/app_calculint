@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { Alert, View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { useLogin } from "../hooks/useLogin";
 import { useAuth } from "../contexts/auth";
-
 
 export default function Login() {
   const { entrar } = useAuth();
@@ -20,22 +19,22 @@ export default function Login() {
       const data = await login({ email, password })
 
       if (data) {
-        console.log("Name:", data.name);
-        console.log("Token:", data.token);
-        console.log("nivel atual: ", data.nivelAtual)
-
         await entrar({
           name: data.name,
           token: data.token,
           nivelAtual: data.nivelAtual
         });
 
-        router.replace("/selecionar_nivel");
+        router.navigate("/selecionar_nivel");
         //
         //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
       }
     } catch (error) {
-      console.log("erro no login", error)
+      console.error("Erro no login:", error);
+      Alert.alert(
+        "Não foi possível entrar",
+        "Confira seu e-mail e senha e veja se o backend está rodando.",
+      );
     }
   }
 

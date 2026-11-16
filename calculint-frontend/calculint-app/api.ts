@@ -1,6 +1,9 @@
 import axios from "axios"
+import { Platform } from "react-native";
 
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const apiUrl = Platform.OS === "web"
+  ? process.env.EXPO_PUBLIC_API_URL_WEB || process.env.EXPO_PUBLIC_API_URL
+  : process.env.EXPO_PUBLIC_API_URL;
 
 if (!apiUrl) {
   throw new Error("Configure EXPO_PUBLIC_API_URL no arquivo .env.local");

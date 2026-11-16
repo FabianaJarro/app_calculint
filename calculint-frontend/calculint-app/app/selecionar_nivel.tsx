@@ -1,15 +1,16 @@
 
-import React, { useCallback, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     View,
     Text,
+    Alert,
     StyleSheet,
     Pressable,
     Animated,
     ScrollView,
     useWindowDimensions,
 } from "react-native";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useAuth } from "../contexts/auth"
 
 
@@ -45,8 +46,9 @@ export default function EscolherNivel() {
     const router = useRouter();
     const { width } = useWindowDimensions();
 
-    const { usuario } = useAuth()
+    const { usuario, atualizarNivel } = useAuth()
       const name = usuario?.name ?? ""
+    const [salvando, setSalvando] = useState(false);
 
     const animacoes = useRef(
         NIVEIS.map(() => ({
@@ -55,51 +57,51 @@ export default function EscolherNivel() {
         }))
     ).current;
 
-    useFocusEffect(
-        useCallback(() => {
-            // Reinicia as três animações ao entrar na rota.
-            animacoes.forEach((animacao) => {
-                animacao.opacity.setValue(0);
-                animacao.translateX.setValue(-55);
-            });
+    useEffect(() => {
+        animacoes.forEach((animacao) => {
+            animacao.opacity.setValue(0);
+            animacao.translateX.setValue(-55);
+        });
 
-            const animacoesSequenciais = animacoes.map((animacao) =>
-                Animated.parallel([
-                    Animated.timing(animacao.opacity, {
-                        toValue: 1,
-                        duration: 450,
-                        useNativeDriver: true,
-                    }),
-                    Animated.spring(animacao.translateX, {
-                        toValue: 0,
-                        tension: 55,
-                        friction: 9,
-                        useNativeDriver: true,
-                    }),
-                ])
-            );
+        const animacoesSequenciais = animacoes.map((animacao) =>
+            Animated.parallel([
+                Animated.timing(animacao.opacity, {
+                    toValue: 1,
+                    duration: 450,
+                    useNativeDriver: true,
+                }),
+                Animated.spring(animacao.translateX, {
+                    toValue: 0,
+                    tension: 55,
+                    friction: 9,
+                    useNativeDriver: true,
+                }),
+            ])
+        );
 
-            const sequencia = Animated.stagger(
-                180,
-                animacoesSequenciais
-            );
+        const sequencia = Animated.stagger(180, animacoesSequenciais);
+        sequencia.start();
 
-            sequencia.start();
-
-            return () => {
-                sequencia.stop();
-            };
-        }, [animacoes])
-    );
+        return () => {
+            sequencia.stop();
+        };
+    }, [animacoes]);
 
     const larguraCartao = Math.min(width - 52, 430);
 
-    function selecionarNivel(nivel: Nivel) {
-        // Ajuste o destino para a rota real do seu aplicativo.
-        router.push({
-            pathname: "/calculadora",
-            params: { nivel },
-        });
+    async function selecionarNivel(nivel: Nivel) {
+        if (salvando) return;
+        setSalvando(true);
+        try {
+            const nivelBackend = nivel.toUpperCase() as "BASICO" | "INTERMEDIARIO" | "AVANCADO";
+            await atualizarNivel(nivelBackend);
+            router.navigate({ pathname: "/operacoes", params: { nivel } });
+        } catch (error) {
+            console.error("Erro ao salvar nível:", error);
+            Alert.alert("Não foi possível salvar", "Confira sua conexão e tente escolher o nível novamente.");
+        } finally {
+            setSalvando(false);
+        }
     }
 
     return (
@@ -147,6 +149,7 @@ export default function EscolherNivel() {
                             >
                                 <Pressable
                                     onPress={() => selecionarNivel(nivel.id)}
+                                    disabled={salvando}
                                     accessibilityRole="button"
                                     accessibilityLabel={
                                         `${nivel.titulo}: ${nivel.descricao}`

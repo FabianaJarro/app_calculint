@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
+  Alert,
   Platform,
   ScrollView,
   StyleSheet,
@@ -36,7 +37,11 @@ export default function Cadastro() {
       router.push("/login");
 
     } catch (error) {
-      console.log("Erro ao cadastrar:", error);
+      console.error("Erro ao cadastrar:", error);
+      Alert.alert(
+        "Não foi possível criar a conta",
+        "Confira sua conexão e os dados. Este e-mail pode já estar cadastrado.",
+      );
     }
   }
 

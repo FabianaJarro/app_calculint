@@ -1,20 +1,12 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import {
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-
-const operacoes = [
-  { id: "adicao", nome: "Adição", simbolo: "+", cor: "#D96E2A", fundo: "#FFF1E8" },
-  { id: "subtracao", nome: "Subtração", simbolo: "−", cor: "#4D8D9A", fundo: "#EAF6F7" },
-  { id: "multiplicacao", nome: "Multiplicação", simbolo: "×", cor: "#D96E2A", fundo: "#FFF1E8" },
-  { id: "divisao", nome: "Divisão", simbolo: "÷", cor: "#4D8D9A", fundo: "#EAF6F7" },
-  { id: "revisao", nome: "Revisão", simbolo: "✓", cor: "#638298", fundo: "#EEF3F7" },
-];
+import { CATEGORIAS, type Categoria, type Nivel } from "../data/exercises";
 
 const nomesNiveis: Record<string, string> = {
   basico: "Básico",
@@ -23,14 +15,13 @@ const nomesNiveis: Record<string, string> = {
 };
 
 export default function Operacoes() {
+  const router = useRouter();
   const { nivel } = useLocalSearchParams<{ nivel?: string }>();
-  const nomeNivel = nivel ? nomesNiveis[nivel] ?? nivel : "";
+  const nivelValido = nivel && nivel in nomesNiveis ? nivel as Nivel : "basico";
+  const nomeNivel = nomesNiveis[nivelValido];
 
-  function selecionarOperacao(nome: string) {
-    Alert.alert(
-      "Em breve",
-      `Os exercícios de ${nome.toLowerCase()} serão adicionados em uma próxima etapa.`,
-    );
+  function selecionarCategoria(categoria: Categoria) {
+    router.push({ pathname: "/exercicio", params: { nivel: nivelValido, categoria } });
   }
 
   return (
@@ -44,24 +35,25 @@ export default function Operacoes() {
           <Text style={styles.textoTag}>NÍVEL {nomeNivel.toLocaleUpperCase()}</Text>
         </View>
       ) : null}
-      <Text style={styles.titulo}>Escolha uma operação</Text>
+      <Text style={styles.titulo}>O que você quer praticar?</Text>
       <Text style={styles.subtitulo}>
-        Selecione o que você quer praticar.
+        Escolha um assunto. Você pode praticar no seu ritmo.
       </Text>
 
       <View style={styles.grade}>
-        {operacoes.map((operacao) => (
+        {CATEGORIAS.map((operacao) => (
           <Pressable
             key={operacao.id}
             accessibilityRole="button"
-            onPress={() => selecionarOperacao(operacao.nome)}
+            onPress={() => selecionarCategoria(operacao.id)}
             style={({ pressed }) => [
               styles.cartao,
+              operacao.id === "cotidiano" && styles.cartaoCotidiano,
               { backgroundColor: operacao.fundo },
               pressed && styles.cartaoPressionado,
             ]}
           >
-            <View style={[styles.bolhaSimbolo, { backgroundColor: operacao.cor }]}>
+              <View style={[styles.bolhaSimbolo, operacao.id === "cotidiano" && styles.cartaoCotidianoBolha, { backgroundColor: operacao.cor }]}>
               <Text style={styles.simbolo}>{operacao.simbolo}</Text>
             </View>
             <Text style={styles.nomeOperacao}>{operacao.nome}</Text>
@@ -122,6 +114,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 8,
     paddingVertical: 16,
+  },
+  cartaoCotidiano: {
+    width: "100%",
+    minHeight: 112,
+    flexDirection: "row",
+    gap: 14,
+  },
+  cartaoCotidianoBolha: {
+    marginBottom: 0,
   },
   cartaoPressionado: {
     opacity: 0.76,

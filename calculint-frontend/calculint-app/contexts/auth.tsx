@@ -10,12 +10,15 @@ import {
 } from "react";
 
 import type { LoginResponse } from "../interface/LoginResponse";
-import { configurarToken, removerToken } from "../api";
+import type { Nivel as NivelBackend } from "../interface/LoginResponse";
+import { api, configurarToken, removerToken } from "../api";
 
 type AuthContextType = {
   usuario: LoginResponse | null;
   carregando: boolean;
   entrar: (dados: LoginResponse) => Promise<void>;
+  atualizarNivel: (nivel: NivelBackend) => Promise<void>;
+  atualizarNome: (name: string) => Promise<void>;
   sair: () => Promise<void>;
 };
 
@@ -104,9 +107,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ]);
   }, []);
 
+  const atualizarNivel = useCallback(async (nivel: NivelBackend) => {
+    await api.put("/user/nivel", { nivelAtual: nivel });
+    await AsyncStorage.setItem("nivelAtual", nivel);
+    setUsuario((atual) => atual ? { ...atual, nivelAtual: nivel } : atual);
+  }, []);
+
+  const atualizarNome = useCallback(async (name: string) => {
+    await AsyncStorage.setItem("name", name);
+    setUsuario((atual) => atual ? { ...atual, name } : atual);
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ usuario, carregando, entrar, sair }}
+      value={{ usuario, carregando, entrar, atualizarNivel, atualizarNome, sair }}
     >
       {children}
     </AuthContext.Provider>

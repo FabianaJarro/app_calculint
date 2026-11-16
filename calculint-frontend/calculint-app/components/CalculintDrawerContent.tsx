@@ -50,10 +50,20 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
           <DrawerItem
             label="Página Inicial"
             icon={({ color }) => <Text style={[styles.icon, { color }]}>⌂</Text>}
-            onPress={() => props.navigation.navigate("inicio")}
+            onPress={() => router.navigate({
+              pathname: "/operacoes",
+              params: { nivel: usuario?.nivelAtual?.toLowerCase() ?? "basico" },
+            })}
             activeTintColor="#D96E2A"
             inactiveTintColor="#43566A"
             activeBackgroundColor="#FFF1E8"
+            labelStyle={styles.label}
+          />
+          <DrawerItem
+            label="Mudar nível"
+            icon={({ color }) => <Text style={[styles.icon, { color }]}>⇅</Text>}
+            onPress={() => props.navigation.navigate("selecionar_nivel")}
+            inactiveTintColor="#43566A"
             labelStyle={styles.label}
           />
           <DrawerItem
@@ -67,7 +77,7 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
           <DrawerItem
             label="Editar perfil"
             icon={({ color }) => <Text style={[styles.icon, { color }]}>✎</Text>}
-            onPress={() => abrirEmBreve("Editar perfil")}
+            onPress={() => router.push("/perfil")}
             inactiveTintColor="#43566A"
             labelStyle={styles.label}
           />
