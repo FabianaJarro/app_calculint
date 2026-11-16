@@ -1,5 +1,5 @@
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
     View,
     Text,
@@ -8,12 +8,13 @@ import {
     Animated,
     ScrollView,
     useWindowDimensions,
+    Alert
 } from "react-native";
+
 import { useFocusEffect, useRouter } from "expo-router";
 import { useAuth } from "../contexts/auth"
+import type { Nivel } from "../interface/LoginResponse";
 
-
-type Nivel = "basico" | "intermediario" | "avancado";
 
 const NIVEIS: {
     id: Nivel;
@@ -22,19 +23,19 @@ const NIVEIS: {
     cor: string;
 }[] = [
         {
-            id: "basico",
+            id: "BASICO",
             titulo: "Básico",
             descricao: "operações básicas, quantidades",
             cor: "#F8F0A8",
         },
         {
-            id: "intermediario",
+            id: "INTERMEDIARIO",
             titulo: "Intermediário",
             descricao: "situações reais, troco, horário",
             cor: "#D1EDBE",
         },
         {
-            id: "avancado",
+            id: "AVANCADO",
             titulo: "Avançado",
             descricao: "situações completas, financeiro",
             cor: "#D5F0F5",
@@ -45,8 +46,10 @@ export default function EscolherNivel() {
     const router = useRouter();
     const { width } = useWindowDimensions();
 
-    const { usuario } = useAuth()
-      const name = usuario?.name ?? ""
+    const { usuario, atualizarNivel } = useAuth();
+    const [salvando, setSalvando] = useState(false);
+
+    const name = usuario?.name ?? ""
 
     const animacoes = useRef(
         NIVEIS.map(() => ({
@@ -94,12 +97,29 @@ export default function EscolherNivel() {
 
     const larguraCartao = Math.min(width - 52, 430);
 
-    function selecionarNivel(nivel: Nivel) {
-        // Ajuste o destino para a rota real do seu aplicativo.
-        router.push({
-            pathname: "/calculadora",
+    async function selecionarNivel(nivel: Nivel) {
+        if (salvando) return;
+
+        setSalvando(true);
+
+        try {
+        await atualizarNivel(nivel);
+
+        router.replace({
+            pathname: "/operacoes",
             params: { nivel },
         });
+
+        } catch (error) {
+            console.error("Erro ao atualizar nível:", error);
+
+            Alert.alert(
+                "erro, não foi possivel salvar seu nível"
+            );
+
+        } finally {
+            setSalvando(false);
+        }
     }
 
     return (
@@ -146,6 +166,7 @@ export default function EscolherNivel() {
                                 ]}
                             >
                                 <Pressable
+                                    disabled={salvando}
                                     onPress={() => selecionarNivel(nivel.id)}
                                     accessibilityRole="button"
                                     accessibilityLabel={
@@ -158,7 +179,7 @@ export default function EscolherNivel() {
                                     ]}
                                 >
                                     {/*
-                    Quando tiver as imagens, substitua o View
+                    quando tiver as imagens, substituir o View
                     abaixo por um ImageBackground.
 
                     Exemplo:
@@ -279,7 +300,7 @@ const styles = StyleSheet.create({
     },
     introducao: {
         marginBottom: 23,
-        width:"100%"
+        width: "100%"
     },
 
     saudacao: {
@@ -300,3 +321,9 @@ const styles = StyleSheet.create({
         color: "#6C8BA3",
     },
 });
+
+
+
+//
+//usar replace inves de push, suas diferenças 
+//evita que o usuáriovolta à seleção de nível simplesmente pressionando o botão de voltar

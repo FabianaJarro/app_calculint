@@ -9,14 +9,21 @@ import {
   type ReactNode,
 } from "react";
 
-import type { LoginResponse } from "../interface/LoginResponse";
+import type {
+  LoginResponse, Nivel
+} from "../interface/LoginResponse";
+
 import { configurarToken, removerToken } from "../api";
+import { api } from "../api";
+
+
 
 type AuthContextType = {
   usuario: LoginResponse | null;
   carregando: boolean;
   entrar: (dados: LoginResponse) => Promise<void>;
   sair: () => Promise<void>;
+  atualizarNivel: (nivel: Nivel) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(
@@ -46,8 +53,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (ativo && token && name) {
           const nivelAtual =
             nivelSalvo === "BASICO" ||
-            nivelSalvo === "INTERMEDIARIO" ||
-            nivelSalvo === "AVANCADO"
+              nivelSalvo === "INTERMEDIARIO" ||
+              nivelSalvo === "AVANCADO"
               ? nivelSalvo
               : null;
 
@@ -93,6 +100,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const atualizarNivel = useCallback(async (nivel: Nivel) => {
+
+
+    console.log(
+      "Token configurado?",
+      Boolean(api.defaults.headers.common.Authorization)
+    );
+
+    //envia pro backend
+    const resposta = await api.put<{ nivelAtual: Nivel }>(
+      "/user/nivel",
+      { nivelAtual: nivel }
+    );
+
+    const nivelSalvo = resposta.data.nivelAtual;
+
+    //salva local
+    await AsyncStorage.setItem("nivelAtual", nivelSalvo);
+
+    //atualiza o contexto
+    setUsuario((usuarioAnterior) =>
+      usuarioAnterior ? { ...usuarioAnterior, nivelatual: nivelSalvo } : null)
+  }, []);
+
+
   const sair = useCallback(async () => {
     removerToken();
     setUsuario(null);
@@ -106,7 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ usuario, carregando, entrar, sair }}
+      value={{ usuario, carregando, entrar, sair, atualizarNivel }}
     >
       {children}
     </AuthContext.Provider>

@@ -17,18 +17,16 @@ export default function Index() {
     }
 
     if (usuario.nivelAtual) {
-      const rotas = {
-        BASICO: "/operacoes?nivel=basico",
-        INTERMEDIARIO: "/operacoes?nivel=intermediario",
-        AVANCADO: "/operacoes?nivel=avancado",
-      } as const;
-
-      router.replace(rotas[usuario.nivelAtual]);
+      router.replace({
+        pathname: "/operacoes",
+        params: { nivel: usuario.nivelAtual },
+      });
     } else {
       router.replace("/selecionar_nivel");
     }
   }, [carregando, usuario, router]);
 
+  
   return (
     <View style={styles.container}>
       <ActivityIndicator size="large" color="#99D1D3" />
