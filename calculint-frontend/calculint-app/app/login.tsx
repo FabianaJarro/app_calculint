@@ -21,16 +21,15 @@ export default function Login() {
 
       if (data) {
         console.log("Name:", data.name);
-        console.log("Token:", data.token);
         console.log("nivel atual: ", data.nivelAtual)
 
         await entrar({
           name: data.name,
           token: data.token,
-          nivelAtual: data.nivelAtual
+          nivelAtual: data.nivelAtual ?? null,
         });
 
-        router.replace("/selecionar_nivel");
+        router.replace("/");
         //
         //método usado para salvar dados no armazenamento local do dispositivo, aqui é um set, no index é um getItem
       }

@@ -103,20 +103,20 @@ export default function EscolherNivel() {
         setSalvando(true);
 
         try {
-        await atualizarNivel(nivel);
+            await atualizarNivel(nivel);
 
-        router.replace({
-            pathname: "/operacoes",
-            params: { nivel },
-        });
+            router.replace({
+                pathname: "/operacoes",
+                params: { nivel },
+            });
 
         } catch (error) {
-            console.error("Erro ao atualizar nível:", error);
+            console.error("Erro ao salvar nível:", error);
 
             Alert.alert(
-                "erro, não foi possivel salvar seu nível"
+                "Erro",
+                "Não foi possível salvar o nível."
             );
-
         } finally {
             setSalvando(false);
         }

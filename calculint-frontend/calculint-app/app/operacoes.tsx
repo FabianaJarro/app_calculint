@@ -1,6 +1,9 @@
 
 import { useState } from "react";
-import { useRouter } from "expo-router";
+import {
+  useRouter,
+  useLocalSearchParams,
+} from "expo-router";
 import {
   Pressable,
   ScrollView,
@@ -108,7 +111,15 @@ export default function Operacoes() {
   const router = useRouter();
   const { usuario } = useAuth();
 
-  const nivel = usuario?.nivelAtual;
+  const { nivel: nivelParametro } =
+    useLocalSearchParams<{ nivel?: string }>();
+
+  const nivel =
+    nivelParametro === "BASICO" ||
+      nivelParametro === "INTERMEDIARIO" ||
+      nivelParametro === "AVANCADO"
+      ? nivelParametro
+      : usuario?.nivelAtual ?? null;
 
   // 0 = fechado
   // 1 = mostra 1/4

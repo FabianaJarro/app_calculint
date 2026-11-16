@@ -228,16 +228,17 @@ export default function TelaExercicio() {
     const [introducao, setIntroducao] = useState(false);
     const [finalizado, setFinalizado] = useState(false);
 
-    useEffect(() => {
-        if (!nivel || !operacao) {
-            setErro("Nível ou operação não informado.");
-            setCarregando(false);
-            return;
-        }
 
+    useEffect(() => {
         let ativo = true;
 
         async function carregarExercicios() {
+            if (!nivel || !operacao) {
+                setErro("Nível ou operação não informado.");
+                setCarregando(false);
+                return;
+            }
+
             setCarregando(true);
             setErro("");
 
@@ -262,18 +263,35 @@ export default function TelaExercicio() {
                     setFinalizado(false);
 
                     setIntroducao(
-                        nivel === "BASICO" && operacao === "adicao"
-
+                        nivel === "BASICO" &&
+                        operacao === "adicao"
                     );
                 }
-            } catch (error) {
-                console.error("Erro ao buscar exercícios:", error);
+
+            } catch (error: any) {
+                console.warn("Falha ao buscar exercícios");
+
+                console.log("Status:", error.response?.status);
+                console.log("Resposta:", error.response?.data);
+                console.log("Mensagem:", error.message);
+
+                console.log(
+                    "Token configurado?",
+                    Boolean(
+                        api.defaults.headers.common.Authorization
+                    )
+                );
 
                 if (ativo) {
-                    setErro("Não foi possível carregar os exercícios.");
+                    setErro(
+                        "Não foi possível carregar os exercícios."
+                    );
                 }
+
             } finally {
-                if (ativo) setCarregando(false);
+                if (ativo) {
+                    setCarregando(false);
+                }
             }
         }
 
@@ -282,7 +300,9 @@ export default function TelaExercicio() {
         return () => {
             ativo = false;
         };
+
     }, [nivel, operacao, modulo]);
+
 
     function conferirResposta() {
         if (selecionada === null || conferida) return;
@@ -295,6 +315,11 @@ export default function TelaExercicio() {
 
         setConferida(true);
     }
+    function tentarNovamente() {
+        setSelecionada(null);
+        setConferida(false);
+    }
+
 
     function proximoExercicio() {
         if (indice === exercicios.length - 1) {
@@ -441,6 +466,54 @@ export default function TelaExercicio() {
         : undefined;
     const acertou = selecionada === exercicio.respostaCorreta;
 
+
+    if (conferida) {
+        return (
+            <View style={styles.telaFeedback}>
+                <View style={styles.faixaFeedback} />
+
+                <View style={styles.conteudoFeedback}>
+                    <Image
+                        source={
+                            acertou
+                                ? require("./assets/exercicios/feedback-acerto.png")
+                                : require("./assets/exercicios/feedback-erro.png")
+                        }
+                        style={styles.imagemFeedback}
+                        resizeMode="contain"
+                    />
+
+                    <Text style={styles.tituloFeedback}>
+                        {acertou ? "Muito bem!" : "Quase lá!"}
+                    </Text>
+
+                    <Text style={styles.descricaoFeedback}>
+                        {acertou
+                            ? "Você encontrou a resposta!\nContinue aprendendo\nno seu ritmo."
+                            : "Vamos tentar novamente!\nVocê pode fazer isso\nno seu ritmo."}
+                    </Text>
+                </View>
+
+                <Pressable
+                    style={styles.botaoFeedback}
+                    onPress={
+                        acertou
+                            ? proximoExercicio
+                            : tentarNovamente
+                    }
+                    accessibilityRole="button"
+                >
+                    <Text style={styles.textoBotao}>
+                        {acertou
+                            ? "Continuar"
+                            : "Tentar novamente"}
+                    </Text>
+                </Pressable>
+            </View>
+        );
+    }
+
+
     return (
         <ScrollView
             style={styles.container}
@@ -536,32 +609,17 @@ export default function TelaExercicio() {
                 })}
             </View>
 
-            {conferida && (
-                <View style={styles.feedback}>
-                    <Text style={styles.feedbackTexto}>
-                        {acertou
-                            ? "Muito bem! Você acertou!"
-                            : `Vamos conferir juntos: a resposta é ${exercicio.respostaCorreta}.`}
-                    </Text>
-                </View>
-            )}
 
             <Pressable
                 disabled={selecionada === null}
-                onPress={
-                    conferida ? proximoExercicio : conferirResposta
-                }
+                onPress={conferirResposta}
                 style={[
                     styles.botao,
                     selecionada === null && styles.botaoDesabilitado,
                 ]}
             >
                 <Text style={styles.textoBotao}>
-                    {conferida
-                        ? indice === exercicios.length - 1
-                            ? "Finalizar"
-                            : "Próximo"
-                        : "Conferir resposta"}
+                    Conferir resposta
                 </Text>
             </Pressable>
         </ScrollView>
@@ -720,4 +778,53 @@ const styles = StyleSheet.create({
         color: "#347A89",
         textAlign: "center",
     },
+
+
+    telaFeedback: {
+        flex: 1,
+        backgroundColor: "#FFFFFF",
+    },
+
+    faixaFeedback: {
+        height: 85,
+        backgroundColor: "#39C7C5",
+    },
+
+    conteudoFeedback: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 30,
+    },
+
+    imagemFeedback: {
+        width: 165,
+        height: 165,
+        marginBottom: 26,
+    },
+
+    tituloFeedback: {
+        fontSize: 30,
+        fontWeight: "700",
+        color: "#146451",
+        textAlign: "center",
+        marginBottom: 24,
+    },
+
+    descricaoFeedback: {
+        fontSize: 18,
+        lineHeight: 29,
+        color: "#455F66",
+        textAlign: "center",
+    },
+
+    botaoFeedback: {
+        backgroundColor: "#FF8915",
+        marginHorizontal: 28,
+        marginBottom: 35,
+        borderRadius: 12,
+        paddingVertical: 17,
+        alignItems: "center",
+    },
+
 });

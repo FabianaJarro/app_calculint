@@ -1,36 +1,49 @@
 
-import { useEffect } from "react";
-import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { Redirect } from "expo-router";
+
+import {
+  View,
+  ActivityIndicator,
+  StyleSheet,
+} from "react-native";
+
 import { useAuth } from "../contexts/auth";
 
 export default function Index() {
-  const router = useRouter();
   const { usuario, carregando } = useAuth();
 
-  useEffect(() => {
-    if (carregando) return;
+  // Aguarda o AuthContext carregar a sessão
+  if (carregando) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator
+          size="large"
+          color="#99D1D3"
+        />
+      </View>
+    );
+  }
 
-    if (!usuario) {
-      router.replace("/registre_se");
-      return;
-    }
+  // Usuário não autenticado
+  if (!usuario) {
+    return <Redirect href="/registre_se" />;
+  }
 
-    if (usuario.nivelAtual) {
-      router.replace({
-        pathname: "/operacoes",
-        params: { nivel: usuario.nivelAtual },
-      });
-    } else {
-      router.replace("/selecionar_nivel");
-    }
-  }, [carregando, usuario, router]);
+  // Usuário ainda não escolheu um nível
+  if (!usuario.nivelAtual) {
+    return <Redirect href="/selecionar_nivel" />;
+  }
 
-  
+  // Usuário já possui um nível salvo
   return (
-    <View style={styles.container}>
-      <ActivityIndicator size="large" color="#99D1D3" />
-    </View>
+    <Redirect
+      href={{
+        pathname: "/operacoes",
+        params: {
+          nivel: usuario.nivelAtual,
+        },
+      }}
+    />
   );
 }
 

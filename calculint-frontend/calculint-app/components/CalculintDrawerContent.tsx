@@ -20,6 +20,27 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
     }
   }
 
+  function irParaInicio() {
+    props.navigation.closeDrawer();
+
+    if (usuario?.nivelAtual) {
+      router.replace({
+        pathname: "/operacoes",
+        params: {
+          nivel: usuario.nivelAtual,
+        },
+      });
+    } else {
+      router.replace("/selecionar_nivel");
+    }
+  }
+
+  function mudarNivel() {
+    props.navigation.closeDrawer();
+    router.push("/selecionar_nivel");
+  }
+
+
 
   function abrirEmBreve(section: string) {
     props.navigation.navigate("em-breve", { section });
@@ -50,12 +71,26 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
           <DrawerItem
             label="Página Inicial"
             icon={({ color }) => <Text style={[styles.icon, { color }]}>⌂</Text>}
-            onPress={() => props.navigation.navigate("inicio")}
+            onPress={irParaInicio}
             activeTintColor="#D96E2A"
             inactiveTintColor="#43566A"
             activeBackgroundColor="#FFF1E8"
             labelStyle={styles.label}
           />
+
+
+          <DrawerItem
+            label="Mudar de nível"
+            icon={({ color }) => (
+              <Text style={[styles.icon, { color }]}>⇄</Text>
+            )}
+            onPress={mudarNivel}
+            activeTintColor="#D96E2A"
+            inactiveTintColor="#43566A"
+            activeBackgroundColor="#FFF1E8"
+            labelStyle={styles.label}
+          />
+
           <DrawerItem
             label="Histórico"
             icon={({ color }) => <Text style={[styles.icon, { color }]}>◷</Text>}
