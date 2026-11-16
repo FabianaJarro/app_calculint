@@ -1,43 +1,44 @@
-import {View, Image, StyleSheet, Text} from "react-native"
-import { Card } from "../components/Card"
-import { FoodData } from "../interface/FoodData";
-import { useFoodData } from "../hooks/useFoodData";
 
-export default function Index(){
+import { useEffect } from "react";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
+import { useRouter } from "expo-router";
+import { useAuth } from "../contexts/auth";
 
-// const data: FoodData[]=[];
-const {data} =useFoodData();
+export default function Index() {
+  const router = useRouter();
+  const { usuario, carregando } = useAuth();
 
+  useEffect(() => {
+    if (carregando) return;
 
-//uma contante chamada data que é um array do tipeo FoodData,começando vazio
-//const algumaCoisa: Tipo = valor;
+    if (!usuario) {
+      router.replace("/registre_se");
+      return;
+    }
 
-  return(
-    <View style={styles.container}> 
-      <Text>test- cardápio</Text>
-      
-      <View >
-        {data?.map(foodData=><Card 
-                                title={foodData.title}
-                                image={foodData.image}
-                                price={foodData.price}
-                                />)}
+    if (usuario.nivelAtual) {
+      router.replace({
+        pathname: "/operacoes",
+        params: { nivel: usuario.nivelAtual },
+      });
+    } else {
+      router.replace("/selecionar_nivel");
+    }
+  }, [carregando, usuario, router]);
 
-      </View>
+  
+  return (
+    <View style={styles.container}>
+      <ActivityIndicator size="large" color="#99D1D3" />
     </View>
-  )
+  );
 }
 
-//o foodData (com minuscula) é uma variável (tipo o item (do exemplo lá))
-
-
-
-const styles= StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
-    backgroundColor:"#FFF" ,
-    gap: 80,
-    
-  }
-
-
-})
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
