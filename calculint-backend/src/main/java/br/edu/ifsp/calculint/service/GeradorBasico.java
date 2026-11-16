@@ -175,18 +175,17 @@ public class GeradorBasico {
 
         for (int i = 0; i < 4; i++) {
 
-            // Sorteia as unidades
+
             int unidadesA = numero(1, 4);
             int unidadesB = numero(
                     1,
                     Math.min(5, 9 - unidadesA)
             );
 
-            // Forma os números
             int a = dezenasA[i] * 10 + unidadesA;
             int b = dezenasB[i] * 10 + unidadesB;
 
-            // Calcula o resultado
+            //aqui calcula o resultado
             int resposta = a + b;
 
             String enunciado =

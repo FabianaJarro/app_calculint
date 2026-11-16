@@ -33,6 +33,11 @@ import IntroducaoExercicio from "../components/exercicios/IntroducaoExercicio";
 
 import { useExercicios } from "../hooks/useExercicios";
 
+import TelaConclusao from "../components/exercicios/TelaConclusao";
+
+import { useEffect } from "react";
+import { api } from "../api";
+
 const nomesOperacoes: Record<string, string> = {
     adicao: "Adição",
     subtracao: "Subtração",
@@ -81,6 +86,44 @@ export default function TelaExercicio() {
     } = useExercicios(nivel, operacao, modulo);
 
 
+    useEffect(() => {
+        if (
+            !finalizado ||
+            !nivel ||
+            !operacao ||
+            exercicios.length === 0
+        ) {
+            return;
+        }
+
+        async function salvarProgresso() {
+            try {
+                await api.put("/progresso", {
+                    nivel,
+                    operacao,
+                    modulo,
+                    acertos,
+                    totalQuestoes: exercicios.length,
+                });
+
+                console.log("Progresso salvo com sucesso!");
+            } catch (error) {
+                console.warn("Erro ao salvar progresso:", error);
+            }
+        }
+
+        void salvarProgresso();
+    }, [
+        finalizado,
+        nivel,
+        operacao,
+        modulo,
+        acertos,
+        exercicios.length,
+    ]);
+
+
+
 
     if (carregando) {
         return (
@@ -106,37 +149,23 @@ export default function TelaExercicio() {
         );
     }
 
+
     if (finalizado) {
         return (
-            <View style={styles.centro}>
-                <Text style={styles.titulo}>Atividade concluída!</Text>
-
-                <Text style={styles.resultado}>
-                    Você acertou {acertos} de {exercicios.length} questões.
-                </Text>
-
-                <Text style={styles.descricao}>
-                    Continue praticando no seu ritmo!
-                </Text>
-
-                <Pressable
-                    style={styles.botao}
-                    onPress={() =>
-                        router.replace({
-                            pathname: "/operacoes",
-                            params: { nivel: nivel ?? "" },
-                        })
-                    }
-                >
-                    <Text style={styles.textoBotao}>
-                        Voltar às operações
-                    </Text>
-                </Pressable>
-            </View>
+            <TelaConclusao
+                acertos={acertos}
+                total={exercicios.length}
+                onVoltar={() =>
+                    router.replace({
+                        pathname: "/operacoes",
+                        params: {
+                            nivel: nivel ?? "",
+                        },
+                    })
+                }
+            />
         );
     }
-
-
 
     if (
         introducao &&
