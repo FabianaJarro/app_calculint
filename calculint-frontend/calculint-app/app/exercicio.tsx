@@ -1,5 +1,3 @@
-
-import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
     ActivityIndicator,
@@ -10,22 +8,30 @@ import {
     View,
 } from "react-native";
 
-import { api } from "../api";
 import { useAuth } from "../contexts/auth";
-import {
-    Image,
-    type ImageSourcePropType,
-} from "react-native";
 
-type Exercicio = {
-    enunciado: string;
-    numero1: number;
-    numero2: number;
-    simbolo: string;
-    objeto: string | null;
-    alternativas: number[];
-    respostaCorreta: number;
-};
+import type { ImageSourcePropType } from "react-native";
+
+import DezenasVisual from "../components/exercicios/DezenasVisual";
+
+import ObjetosRetirados from "../components/exercicios/ObjetosRetirados";
+
+import QuadroDez from "../components/exercicios/QuadroDez";
+
+import IntroducaoCompletar10 from
+    "../components/exercicios/IntroducaoCompletar10";
+
+import IntroducaoDezenas from "../components/exercicios/IntroducaoDezenas";
+
+import RetaNumerica from "../components/exercicios/RetaNumerica";
+
+import GrupoImagens from "../components/exercicios/GrupoImagens";
+
+import TelaFeedback from "../components/exercicios/TelaFeedback";
+
+import IntroducaoExercicio from "../components/exercicios/IntroducaoExercicio";
+
+import { useExercicios } from "../hooks/useExercicios";
 
 const nomesOperacoes: Record<string, string> = {
     adicao: "Adição",
@@ -42,167 +48,6 @@ const IMAGENS: Record<string, ImageSourcePropType> = {
 };
 
 
-function GrupoImagens({
-    imagem,
-    quantidade,
-}: {
-    imagem: ImageSourcePropType;
-    quantidade: number;
-}) {
-    return (
-        <View style={{
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            maxWidth: 170,
-            gap: 3,
-        }}>
-            {Array.from({ length: quantidade }, (_, index) => (
-                <Image
-                    key={index}
-                    source={imagem}
-                    style={{
-                        width: 34,
-                        height: 34,
-                    }}
-                    resizeMode="contain"
-                />
-            ))}
-        </View>
-    );
-}
-
-
-
-function RetaNumerica({
-    inicio,
-    passos,
-    mostrarSolucao = false,
-}: {
-    inicio: number;
-    passos: number;
-    mostrarSolucao?: boolean;
-}) {
-    const chegada = inicio + passos;
-
-    return (
-        <View style={{ marginVertical: 25 }}>
-            <Text
-                style={{
-                    textAlign: "center",
-                    color: "#51848B",
-                    marginBottom: 12,
-                }}
-            >
-                Comece no {inicio} e avance {passos} casas →
-            </Text>
-
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-            >
-                <View
-                    style={{
-                        flexDirection: "row",
-                        paddingVertical: 8,
-                    }}
-                >
-                    <View
-                        style={{
-                            position: "absolute",
-                            top: 46,
-                            left: 18,
-                            right: 18,
-                            height: 2,
-                            backgroundColor: "#A7BCC5",
-                        }}
-                    />
-
-                    {Array.from(
-                        { length: Math.max(11, chegada + 1) },
-                        (_, numero) => (
-                            <View
-                                key={numero}
-                                style={{
-                                    width: 36,
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Text
-                                    style={{
-                                        height: 23,
-                                        color: "#EF7950",
-                                        fontSize: 16,
-                                    }}
-                                >
-                                    {mostrarSolucao &&
-                                        numero > inicio &&
-                                        numero <= chegada
-                                        ? "↓"
-                                        : " "}
-                                </Text>
-
-                                <View
-                                    style={{
-                                        width: 30,
-                                        height: 30,
-                                        borderRadius: 15,
-                                        borderWidth: 2,
-                                        alignItems: "center",
-                                        justifyContent: "center",
-
-                                        borderColor:
-                                            numero === inicio
-                                                ? "#EF7950"
-                                                : mostrarSolucao &&
-                                                    numero === chegada
-                                                    ? "#21A6A4"
-                                                    : "#A7BCC5",
-
-                                        backgroundColor:
-                                            numero === inicio
-                                                ? "#FFE5CE"
-                                                : mostrarSolucao &&
-                                                    numero === chegada
-                                                    ? "#D1F1EA"
-                                                    : "#FFFFFF",
-                                    }}
-                                >
-                                    <Text
-                                        style={{
-                                            fontSize: 12,
-                                            fontWeight: "600",
-                                            color: "#334F61",
-                                        }}
-                                    >
-                                        {numero}
-                                    </Text>
-                                </View>
-                            </View>
-                        )
-                    )}
-                </View>
-            </ScrollView>
-
-            {mostrarSolucao && (
-                <Text
-                    style={{
-                        textAlign: "center",
-                        color: "#21A6A4",
-                        fontWeight: "700",
-                        marginTop: 15,
-                    }}
-                >
-                    {inicio} + {passos} = {chegada}
-                </Text>
-            )}
-        </View>
-    );
-}
-
-
-
-
 export default function TelaExercicio() {
     const router = useRouter();
     const params = useLocalSearchParams<{
@@ -217,120 +62,25 @@ export default function TelaExercicio() {
     const nivel = params.nivel ?? usuario?.nivelAtual;
     const operacao = params.operacao ?? "";
 
-    const [exercicios, setExercicios] = useState<Exercicio[]>([]);
-    const [carregando, setCarregando] = useState(true);
-    const [erro, setErro] = useState("");
 
-    const [indice, setIndice] = useState(0);
-    const [selecionada, setSelecionada] = useState<number | null>(null);
-    const [conferida, setConferida] = useState(false);
-    const [acertos, setAcertos] = useState(0);
-    const [introducao, setIntroducao] = useState(false);
-    const [finalizado, setFinalizado] = useState(false);
-
-
-    useEffect(() => {
-        let ativo = true;
-
-        async function carregarExercicios() {
-            if (!nivel || !operacao) {
-                setErro("Nível ou operação não informado.");
-                setCarregando(false);
-                return;
-            }
-
-            setCarregando(true);
-            setErro("");
-
-            try {
-                const resposta = await api.get<Exercicio[]>(
-                    "/exercicios",
-                    {
-                        params: { nivel, operacao, modulo },
-                    }
-                );
-
-                if (!resposta.data.length) {
-                    throw new Error("Nenhum exercício disponível.");
-                }
-
-                if (ativo) {
-                    setExercicios(resposta.data);
-                    setIndice(0);
-                    setSelecionada(null);
-                    setConferida(false);
-                    setAcertos(0);
-                    setFinalizado(false);
-
-                    setIntroducao(
-                        nivel === "BASICO" &&
-                        operacao === "adicao"
-                    );
-                }
-
-            } catch (error: any) {
-                console.warn("Falha ao buscar exercícios");
-
-                console.log("Status:", error.response?.status);
-                console.log("Resposta:", error.response?.data);
-                console.log("Mensagem:", error.message);
-
-                console.log(
-                    "Token configurado?",
-                    Boolean(
-                        api.defaults.headers.common.Authorization
-                    )
-                );
-
-                if (ativo) {
-                    setErro(
-                        "Não foi possível carregar os exercícios."
-                    );
-                }
-
-            } finally {
-                if (ativo) {
-                    setCarregando(false);
-                }
-            }
-        }
-
-        carregarExercicios();
-
-        return () => {
-            ativo = false;
-        };
-
-    }, [nivel, operacao, modulo]);
+    const {
+        exercicios,
+        carregando,
+        erro,
+        indice,
+        selecionada,
+        setSelecionada,
+        conferida,
+        acertos,
+        introducao,
+        setIntroducao,
+        finalizado,
+        conferirResposta,
+        tentarNovamente,
+        proximoExercicio,
+    } = useExercicios(nivel, operacao, modulo);
 
 
-    function conferirResposta() {
-        if (selecionada === null || conferida) return;
-
-        const correta = exercicios[indice].respostaCorreta;
-
-        if (selecionada === correta) {
-            setAcertos((anterior) => anterior + 1);
-        }
-
-        setConferida(true);
-    }
-    function tentarNovamente() {
-        setSelecionada(null);
-        setConferida(false);
-    }
-
-
-    function proximoExercicio() {
-        if (indice === exercicios.length - 1) {
-            setFinalizado(true);
-            return;
-        }
-
-        setIndice((anterior) => anterior + 1);
-        setSelecionada(null);
-        setConferida(false);
-    }
 
     if (carregando) {
         return (
@@ -387,75 +137,41 @@ export default function TelaExercicio() {
     }
 
 
-    if (introducao) {
-        const ehReta = modulo === "reta";
 
+    if (
+        introducao &&
+        nivel === "BASICO" &&
+        operacao === "adicao" &&
+        modulo === "completar10"
+    ) {
         return (
-            <ScrollView
-                style={styles.container}
-                contentContainerStyle={styles.conteudo}
-            >
-                <View style={styles.faixa} />
+            <IntroducaoCompletar10
+                onContinuar={() => setIntroducao(false)}
+            />
+        );
+    }
 
-                <Text style={styles.etiqueta}>
-                    VAMOS APRENDER
-                </Text>
+    // INTRODUÇÃO: DEZENAS E UNIDADES
+    if (
+        introducao &&
+        nivel === "BASICO" &&
+        operacao === "adicao" &&
+        modulo === "dezenas"
+    ) {
+        return (
+            <IntroducaoDezenas
+                onContinuar={() => setIntroducao(false)}
+            />
+        );
+    }
 
-                <Text style={styles.titulo}>
-                    {ehReta ? "Reta numérica" : "Soma com objetos"}
-                </Text>
-
-                <Text style={styles.subtitulo}>
-                    {ehReta ? "Somando com saltos" : "Juntar quantidades"}
-                </Text>
-
-                <Text style={styles.descricao}>
-                    {ehReta
-                        ? "Na reta numérica, podemos somar avançando casas para a direita. Começamos em um número e damos a quantidade de saltos indicada."
-                        : "Somar significa juntar grupos. Conte os objetos de cada grupo e depois conte todos juntos."}
-                </Text>
-
-                {ehReta ? (
-                    <RetaNumerica
-                        inicio={2}
-                        passos={3}
-                        mostrarSolucao={true}
-                    />
-                ) : (
-                    <View style={styles.grupos}>
-                        <GrupoImagens
-                            imagem={IMAGENS.MACA}
-                            quantidade={2}
-                        />
-
-                        <Text style={styles.sinal}>+</Text>
-
-                        <GrupoImagens
-                            imagem={IMAGENS.MACA}
-                            quantidade={3}
-                        />
-                    </View>
-                )}
-
-                <Text style={styles.etiqueta}>
-                    VEJA COMO FAZER
-                </Text>
-
-                <Text style={styles.descricao}>
-                    {ehReta
-                        ? "Começamos no número 2. Para somar 3, avançamos três casas: 3, 4 e 5. Chegamos ao número 5! Portanto, 2 + 3 = 5."
-                        : "Aqui temos 2 maçãs e mais 3 maçãs. Juntando tudo, temos 5 maçãs: 2 + 3 = 5."}
-                </Text>
-
-                <Pressable
-                    style={styles.botao}
-                    onPress={() => setIntroducao(false)}
-                >
-                    <Text style={styles.textoBotao}>
-                        Próximo
-                    </Text>
-                </Pressable>
-            </ScrollView>
+    if (introducao) {
+        return (
+            <IntroducaoExercicio
+                operacao={operacao}
+                modulo={modulo}
+                onContinuar={() => setIntroducao(false)}
+            />
         );
     }
 
@@ -469,47 +185,11 @@ export default function TelaExercicio() {
 
     if (conferida) {
         return (
-            <View style={styles.telaFeedback}>
-                <View style={styles.faixaFeedback} />
-
-                <View style={styles.conteudoFeedback}>
-                    <Image
-                        source={
-                            acertou
-                                ? require("./assets/exercicios/feedback-acerto.png")
-                                : require("./assets/exercicios/feedback-erro.png")
-                        }
-                        style={styles.imagemFeedback}
-                        resizeMode="contain"
-                    />
-
-                    <Text style={styles.tituloFeedback}>
-                        {acertou ? "Muito bem!" : "Quase lá!"}
-                    </Text>
-
-                    <Text style={styles.descricaoFeedback}>
-                        {acertou
-                            ? "Você encontrou a resposta!\nContinue aprendendo\nno seu ritmo."
-                            : "Vamos tentar novamente!\nVocê pode fazer isso\nno seu ritmo."}
-                    </Text>
-                </View>
-
-                <Pressable
-                    style={styles.botaoFeedback}
-                    onPress={
-                        acertou
-                            ? proximoExercicio
-                            : tentarNovamente
-                    }
-                    accessibilityRole="button"
-                >
-                    <Text style={styles.textoBotao}>
-                        {acertou
-                            ? "Continuar"
-                            : "Tentar novamente"}
-                    </Text>
-                </Pressable>
-            </View>
+            <TelaFeedback
+                acertou={acertou}
+                onContinuar={proximoExercicio}
+                onTentarNovamente={tentarNovamente}
+            />
         );
     }
 
@@ -529,11 +209,17 @@ export default function TelaExercicio() {
             </View>
 
             <Text style={styles.titulo}>
-                {nivel === "BASICO" && operacao === "adicao"
-                    ? modulo === "reta"
-                        ? "Reta numérica"
-                        : "Soma com objetos"
-                    : nomesOperacoes[operacao] ?? "Exercício"}
+                {nivel === "BASICO" && operacao === "subtracao"
+                    ? "Retirando objetos"
+                    : nivel === "BASICO" && operacao === "adicao"
+                        ? modulo === "reta"
+                            ? "Reta numérica"
+                            : modulo === "completar10"
+                                ? "Completando 10"
+                                : modulo === "dezenas"
+                                    ? "Dezenas e unidades"
+                                    : "Soma com objetos"
+                        : nomesOperacoes[operacao] ?? "Exercício"}
             </Text>
 
             <Text style={styles.descricao}>Observe e responda:</Text>
@@ -543,7 +229,26 @@ export default function TelaExercicio() {
             </Text>
 
 
-            {exercicio.objeto === "RETA" ? (
+
+
+            {exercicio.objeto === "DEZENAS" ? (
+                <DezenasVisual
+                    numero1={exercicio.numero1}
+                    numero2={exercicio.numero2}
+                />
+            ) : exercicio.objeto === "QUADRO10" ? (
+                <QuadroDez
+                    preenchidos={exercicio.numero1}
+                />
+            ) : nivel === "BASICO" &&
+                operacao === "subtracao" &&
+                imagemObjeto ? (
+                <ObjetosRetirados
+                    imagem={imagemObjeto}
+                    total={exercicio.numero1}
+                    retirar={exercicio.numero2}
+                />
+            ) : exercicio.objeto === "RETA" ? (
                 <RetaNumerica
                     inicio={exercicio.numero1}
                     passos={exercicio.numero2}
@@ -570,6 +275,9 @@ export default function TelaExercicio() {
                     {exercicio.numero2}
                 </Text>
             )}
+
+
+
 
             <Text style={styles.instrucao}>
                 Escolha uma resposta:
@@ -622,7 +330,7 @@ export default function TelaExercicio() {
                     Conferir resposta
                 </Text>
             </Pressable>
-        </ScrollView>
+        </ScrollView >
     );
 }
 
@@ -671,11 +379,6 @@ const styles = StyleSheet.create({
         fontWeight: "700",
         marginBottom: 25,
     },
-    subtitulo: {
-        fontSize: 17,
-        fontWeight: "700",
-        marginBottom: 12,
-    },
     descricao: {
         fontSize: 15,
         lineHeight: 24,
@@ -701,9 +404,7 @@ const styles = StyleSheet.create({
         gap: 12,
         marginVertical: 36,
     },
-    objetos: {
-        fontSize: 25,
-    },
+
     sinal: {
         color: "#EF7950",
         fontSize: 27,
@@ -747,16 +448,7 @@ const styles = StyleSheet.create({
         color: "#347A89",
         fontWeight: "600",
     },
-    feedback: {
-        marginTop: 18,
-        padding: 14,
-        backgroundColor: "#EAF8F4",
-        borderRadius: 12,
-    },
-    feedbackTexto: {
-        color: "#266C5C",
-        fontSize: 14,
-    },
+
     botao: {
         backgroundColor: "#FF8915",
         paddingVertical: 16,
@@ -779,52 +471,5 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
 
-
-    telaFeedback: {
-        flex: 1,
-        backgroundColor: "#FFFFFF",
-    },
-
-    faixaFeedback: {
-        height: 85,
-        backgroundColor: "#39C7C5",
-    },
-
-    conteudoFeedback: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 30,
-    },
-
-    imagemFeedback: {
-        width: 165,
-        height: 165,
-        marginBottom: 26,
-    },
-
-    tituloFeedback: {
-        fontSize: 30,
-        fontWeight: "700",
-        color: "#146451",
-        textAlign: "center",
-        marginBottom: 24,
-    },
-
-    descricaoFeedback: {
-        fontSize: 18,
-        lineHeight: 29,
-        color: "#455F66",
-        textAlign: "center",
-    },
-
-    botaoFeedback: {
-        backgroundColor: "#FF8915",
-        marginHorizontal: 28,
-        marginBottom: 35,
-        borderRadius: 12,
-        paddingVertical: 17,
-        alignItems: "center",
-    },
 
 });

@@ -36,7 +36,7 @@ const IMAGENS_OPERACOES: Record<
   revisao: require("./assets/operacoes/revisao.png"),
 };
 
-type ModuloId = "objetos" | "reta";
+type ModuloId = "objetos" | "reta" | "completar10"| "dezenas";
 
 const operacoes: {
   id: OperacaoId;
@@ -100,10 +100,12 @@ const conjuntos: {
     {
       numero: "3/4",
       nome: "Completando 10",
+      modulo: "completar10",
     },
     {
       numero: "4/4",
       nome: "Dezenas",
+      modulo: "dezenas",
     },
   ];
 

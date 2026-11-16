@@ -23,8 +23,8 @@ export const Card = ({ title, price, image}: CardProps) => {
     )
 }
 
-//   ../       → components/
-//   ../../    → calculint-app/
+//   ../       components/
+//   ../../    calculint-app/
 
 
 

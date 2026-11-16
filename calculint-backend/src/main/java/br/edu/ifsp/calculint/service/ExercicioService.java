@@ -14,6 +14,11 @@ import java.util.*;
 public class ExercicioService {
 
     private final Random random = new Random();
+    private final GeradorBasico geradorBasico;
+
+    public ExercicioService(GeradorBasico geradorBasico) {
+        this.geradorBasico = geradorBasico;
+    }
 
     public int gerarNumero(int minimo, int maximo) {
         return random.nextInt(maximo - minimo + 1) + minimo;
@@ -36,17 +41,33 @@ public class ExercicioService {
             );
         }
 
-        if (nivel == Nivel.BASICO && op.equals("adicao")) {
-            return switch (modulo) {
-                case "objetos" -> exerciciosObjetosAdicao();
-                case "reta" -> exerciciosRetaNumerica();
 
-                default -> throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Módulo inválido"
-                );
-            };
+        if (nivel == Nivel.BASICO) {
+
+            if (op.equals("adicao")) {
+                String moduloAtual =
+                        modulo == null || modulo.isBlank()
+                                ? "objetos"
+                                : modulo;
+
+                return switch (moduloAtual) {
+                    case "objetos" -> geradorBasico.adicaoObjetos();
+                    case "reta" -> geradorBasico.adicaoReta();
+                    case "completar10" -> geradorBasico.completarDez();
+                    case "dezenas" -> geradorBasico.adicaoDezenas();
+
+                    default -> throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Módulo inválido"
+                    );
+                };
+            }
+
+            if (op.equals("subtracao")) {
+                return geradorBasico.subtracaoObjetos();
+            }
         }
+
 
         List<ExercicioGeradoDTO> exercicios = new ArrayList<>();
 

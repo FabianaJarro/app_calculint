@@ -32,8 +32,10 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         var token = this.recoverToken(request);
 
+        String login = null;
+
         if (token != null) {
-            var login = tokenService.validateToken(token);
+            login = tokenService.validateToken(token);
 
             if (login != null) {
                 User user = userRepository.findByEmail(login)
@@ -52,6 +54,12 @@ public class SecurityFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
+        System.out.println("Rota: " + request.getRequestURI());
+        System.out.println("Token recebido? " + (token != null));
+        System.out.println(
+                "JWT validado? " + (login != null && !login.isBlank())
+        );
 
         filterChain.doFilter(request, response);
     }
