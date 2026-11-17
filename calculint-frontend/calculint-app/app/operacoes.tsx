@@ -22,8 +22,7 @@ type OperacaoId =
   | "adicao"
   | "subtracao"
   | "multiplicacao"
-  | "divisao"
-  | "revisao";
+  | "divisao";
 
 const IMAGENS_OPERACOES: Record<
   OperacaoId,
@@ -33,7 +32,6 @@ const IMAGENS_OPERACOES: Record<
   subtracao: require("./assets/operacoes/subtracao.png"),
   multiplicacao: require("./assets/operacoes/multiplicacao.png"),
   divisao: require("./assets/operacoes/divisao.png"),
-  revisao: require("./assets/operacoes/revisao.png"),
 };
 
 type ModuloId = "objetos" | "reta" | "completar10" | "dezenas";
@@ -72,13 +70,6 @@ const operacoes: {
       simbolo: "÷",
       cor: "#8A794F",
       fundo: "#A6ED9F",
-    },
-    {
-      id: "revisao",
-      nome: "Revisão",
-      simbolo: "🐾",
-      cor: "#087B45",
-      fundo: "#20CD83",
     },
   ];
 
@@ -175,12 +166,6 @@ export default function Operacoes() {
         return 0;
       });
 
-      return;
-    }
-
-
-    if (id === "revisao") {
-      router.push("/em-breve");
       return;
     }
 

@@ -106,13 +106,6 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
             labelStyle={styles.label}
           />
 
-          <DrawerItem
-            label="Histórico"
-            icon={({ color }) => <Text style={[styles.icon, { color }]}>◷</Text>}
-            onPress={() => abrirEmBreve("Histórico")}
-            inactiveTintColor="#43566A"
-            labelStyle={styles.label}
-          />
           <View style={styles.divider} />
           <DrawerItem
             label="Editar perfil"

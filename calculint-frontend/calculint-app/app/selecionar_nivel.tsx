@@ -1,329 +1,301 @@
 
-import React, { useCallback, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "expo-router";
+
 import {
-    View,
-    Text,
-    StyleSheet,
-    Pressable,
-    Animated,
-    ScrollView,
-    useWindowDimensions,
-    Alert
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 
-import { useFocusEffect, useRouter } from "expo-router";
-import { useAuth } from "../contexts/auth"
-import type { Nivel } from "../interface/LoginResponse";
+import { useAuth } from "../contexts/auth";
 
+type Nivel = "BASICO" | "INTERMEDIARIO" | "AVANCADO";
 
-const NIVEIS: {
-    id: Nivel;
-    titulo: string;
-    descricao: string;
-    cor: string;
-}[] = [
-        {
-            id: "BASICO",
-            titulo: "Básico",
-            descricao: "operações básicas, quantidades",
-            cor: "#F8F0A8",
-        },
-        {
-            id: "INTERMEDIARIO",
-            titulo: "Intermediário",
-            descricao: "situações reais, troco, horário",
-            cor: "#D1EDBE",
-        },
-        {
-            id: "AVANCADO",
-            titulo: "Avançado",
-            descricao: "situações completas, financeiro",
-            cor: "#D5F0F5",
-        },
-    ];
+const niveis = [
+  {
+    id: "BASICO",
+    nome: "Básico",
+    cor: "#F8F0A8",
+    borda: "#D9C765",
+  },
+  {
+    id: "INTERMEDIARIO",
+    nome: "Intermediário",
+    cor: "#D1EDBE",
+    borda: "#99C785",
+  },
+  {
+    id: "AVANCADO",
+    nome: "Avançado",
+    cor: "#D5F0F5",
+    borda: "#90C7D1",
+  },
+] as const;
 
-export default function EscolherNivel() {
-    const router = useRouter();
-    const { width } = useWindowDimensions();
+export default function SelecionarNivel() {
+  const router = useRouter();
+  const { usuario, atualizarNivel } = useAuth();
 
-    const { usuario, atualizarNivel } = useAuth();
-    const [salvando, setSalvando] = useState(false);
+  const [nivelSelecionado, setNivelSelecionado] =
+    useState<Nivel>("BASICO");
 
-    const name = usuario?.name ?? ""
+  const [salvando, setSalvando] = useState(false);
+  const [erro, setErro] = useState("");
 
-    const animacoes = useRef(
-        NIVEIS.map(() => ({
-            opacity: new Animated.Value(0),
-            translateX: new Animated.Value(-55),
-        }))
-    ).current;
+  // Se já existe um nível salvo, deixa ele selecionado.
+  useEffect(() => {
+    const atual = usuario?.nivelAtual;
 
-    useFocusEffect(
-        useCallback(() => {
-            // Reinicia as três animações ao entrar na rota.
-            animacoes.forEach((animacao) => {
-                animacao.opacity.setValue(0);
-                animacao.translateX.setValue(-55);
-            });
-
-            const animacoesSequenciais = animacoes.map((animacao) =>
-                Animated.parallel([
-                    Animated.timing(animacao.opacity, {
-                        toValue: 1,
-                        duration: 450,
-                        useNativeDriver: true,
-                    }),
-                    Animated.spring(animacao.translateX, {
-                        toValue: 0,
-                        tension: 55,
-                        friction: 9,
-                        useNativeDriver: true,
-                    }),
-                ])
-            );
-
-            const sequencia = Animated.stagger(
-                180,
-                animacoesSequenciais
-            );
-
-            sequencia.start();
-
-            return () => {
-                sequencia.stop();
-            };
-        }, [animacoes])
-    );
-
-    const larguraCartao = Math.min(width - 52, 430);
-
-    async function selecionarNivel(nivel: Nivel) {
-        if (salvando) return;
-
-        setSalvando(true);
-
-        try {
-            await atualizarNivel(nivel);
-
-            router.replace({
-                pathname: "/operacoes",
-                params: { nivel },
-            });
-
-        } catch (error) {
-            console.error("Erro ao salvar nível:", error);
-
-            Alert.alert(
-                "Erro",
-                "Não foi possível salvar o nível."
-            );
-        } finally {
-            setSalvando(false);
-        }
+    if (
+      atual === "BASICO" ||
+      atual === "INTERMEDIARIO" ||
+      atual === "AVANCADO"
+    ) {
+      setNivelSelecionado(atual);
     }
+  }, [usuario?.nivelAtual]);
 
-    return (
-        <View style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.conteudo}
-                showsVerticalScrollIndicator={false}
-            >
-                {/* <Text style={styles.titulo}>
-                    Escolha um nível!
-                </Text> */}
+  async function continuar() {
+    if (salvando) return;
 
-                <View style={styles.introducao}>
-                    <Text style={styles.saudacao}>
-                        Olá{name ? `, ${name}` : ""}!
-                    </Text>
+    setSalvando(true);
+    setErro("");
 
-                    <Text style={styles.titulo}>
-                        Escolha um nível
-                    </Text>
+    try {
+      // Salva no backend e atualiza o contexto.
+      await atualizarNivel(nivelSelecionado);
 
-                    <Text style={styles.subtitulo}>
-                        No seu ritmo, um passo de cada vez.
-                    </Text>
-                </View>
+      router.replace({
+        pathname: "/operacoes",
+        params: {
+          nivel: nivelSelecionado,
+        },
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar nível:", error);
 
+      setErro(
+        "Não foi possível salvar o nível. Tente novamente."
+      );
+    } finally {
+      setSalvando(false);
+    }
+  }
 
-                <View style={styles.lista}>
-                    {NIVEIS.map((nivel, index) => {
-                        const animacao = animacoes[index];
+  return (
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scroll}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.conteudo}>
+        <View>
+          <Text style={styles.etiqueta}>
+            VAMOS COMEÇAR
+          </Text>
 
-                        return (
-                            <Animated.View
-                                key={nivel.id}
-                                style={[
-                                    styles.cartaoAnimado,
-                                    {
-                                        width: larguraCartao,
-                                        opacity: animacao.opacity,
-                                        transform: [
-                                            { translateX: animacao.translateX },
-                                        ],
-                                    },
-                                ]}
-                            >
-                                <Pressable
-                                    disabled={salvando}
-                                    onPress={() => selecionarNivel(nivel.id)}
-                                    accessibilityRole="button"
-                                    accessibilityLabel={
-                                        `${nivel.titulo}: ${nivel.descricao}`
-                                    }
-                                    style={({ pressed }) => [
-                                        styles.cartao,
-                                        { backgroundColor: nivel.cor },
-                                        pressed && styles.cartaoPressionado,
-                                    ]}
-                                >
-                                    {/*
-                    quando tiver as imagens, substituir o View
-                    abaixo por um ImageBackground.
+          <Text style={styles.titulo}>
+            Escolha seu nível
+          </Text>
 
-                    Exemplo:
-                    <ImageBackground
-                      source={require("../assets/nivel-basico.png")}
-                      style={StyleSheet.absoluteFillObject}
-                      imageStyle={{ borderRadius: 27 }}
-                      resizeMode="cover"
-                    />
-                  */}
+          <Text style={styles.descricao}>
+            Selecione por qual nível quer começar.
+            Você pode mudar depois.
+          </Text>
 
-                                    <View
-                                        pointerEvents="none"
-                                        style={[
-                                            styles.cenario,
-                                            index === 0 && styles.cenarioBasico,
-                                            index === 1 &&
-                                            styles.cenarioIntermediario,
-                                            index === 2 && styles.cenarioAvancado,
-                                        ]}
-                                    />
+          <View style={styles.lista}>
+            {niveis.map((nivel) => {
+              const selecionado =
+                nivelSelecionado === nivel.id;
 
-                                    <View style={styles.textos}>
-                                        <Text style={styles.nomeNivel}>
-                                            {nivel.titulo}
-                                        </Text>
+              return (
+                <Pressable
+                  key={nivel.id}
+                  accessibilityRole="radio"
+                  accessibilityState={{
+                    checked: selecionado,
+                  }}
+                  onPress={() =>
+                    setNivelSelecionado(nivel.id)
+                  }
+                  style={[
+                    styles.cartao,
+                    {
+                      backgroundColor: nivel.cor,
+                      borderColor: nivel.borda,
+                      borderWidth: selecionado ? 2 : 1,
+                    },
+                  ]}
+                >
+                  <View
+                    style={[
+                      styles.circulo,
+                      {
+                        borderColor: nivel.borda,
+                      },
+                      selecionado &&
+                        styles.circuloSelecionado,
+                    ]}
+                  >
+                    {selecionado && (
+                      <Text style={styles.check}>
+                        ✓
+                      </Text>
+                    )}
+                  </View>
 
-                                        <Text style={styles.descricao}>
-                                            {nivel.descricao}
-                                        </Text>
-                                    </View>
-                                </Pressable>
-                            </Animated.View>
-                        );
-                    })}
-                </View>
-            </ScrollView>
+                  <Text style={styles.nomeNivel}>
+                    {nivel.nome}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
-    );
+
+        <View style={styles.rodape}>
+          {!!erro && (
+            <Text style={styles.erro}>
+              {erro}
+            </Text>
+          )}
+
+          <Pressable
+            accessibilityRole="button"
+            disabled={salvando}
+            onPress={continuar}
+            style={[
+              styles.botao,
+              salvando && styles.botaoDesabilitado,
+            ]}
+          >
+            {salvando ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <Text style={styles.textoBotao}>
+                Continuar
+              </Text>
+            )}
+          </Pressable>
+        </View>
+      </View>
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#FFFFFF",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
 
-    conteudo: {
-        flexGrow: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        paddingHorizontal: 26,
-        paddingTop: 55,
-        paddingBottom: 55,
-    },
+  scroll: {
+    flexGrow: 1,
+    alignItems: "center",
+  },
 
-    lista: {
-        width: "100%",
-        alignItems: "center",
-        gap: 30,
-        alignSelf: "stretch",
-    },
+  conteudo: {
+    flexGrow: 1,
+    width: "100%",
+    maxWidth: 420,
+    paddingHorizontal: 24,
+    paddingTop: 50,
+    paddingBottom: 32,
+    justifyContent: "space-between",
+  },
 
-    cartaoAnimado: {
-        height: 96,
-    },
+  etiqueta: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: "#175D51",
+    marginBottom: 16,
+  },
 
-    cartao: {
-        flex: 1,
-        borderRadius: 27,
-        overflow: "hidden",
-        justifyContent: "center",
-        position: "relative",
-    },
+  titulo: {
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#245D51",
+    marginBottom: 16,
+  },
 
-    cenario: {
-        ...StyleSheet.absoluteFill,
-        opacity: 0.75,
-    },
+  descricao: {
+    fontSize: 15,
+    lineHeight: 23,
+    color: "#50747B",
+  },
 
-    cenarioBasico: {
-        backgroundColor: "#FFF4A5",
-    },
+  lista: {
+    marginTop: 32,
+    gap: 14,
+  },
 
-    cenarioIntermediario: {
-        backgroundColor: "#CDEDBA",
-    },
+  cartao: {
+    width: "100%",
+    minHeight: 85,
+    borderRadius: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 18,
+    gap: 18,
+  },
 
-    cenarioAvancado: {
-        backgroundColor: "#C5E8F0",
-    },
+  circulo: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-    textos: {
-        zIndex: 1,
-        alignItems: "flex-end",
-        paddingHorizontal: 11,
-        paddingVertical: 10,
-    },
+  circuloSelecionado: {
+    backgroundColor: "#245D51",
+    borderColor: "#245D51",
+  },
 
-    nomeNivel: {
-        fontFamily: "serif",
-        fontSize: 21,
-        color: "#111111",
-        textAlign: "right",
-    },
+  check: {
+    fontSize: 23,
+    fontWeight: "700",
+    color: "#FFFFFF",
+  },
 
-    descricao: {
-        fontFamily: "serif",
-        fontSize: 16,
-        color: "#111111",
-        textAlign: "right",
-        marginTop: 1,
-    },
+  nomeNivel: {
+    color: "#245D51",
+    fontSize: 19,
+    fontWeight: "700",
+  },
 
-    cartaoPressionado: {
-        opacity: 0.8,
-        transform: [{ scale: 0.98 }],
-    },
-    introducao: {
-        marginBottom: 23,
-        width: "100%"
-    },
+  rodape: {
+    marginTop: 60,
+  },
 
-    saudacao: {
-        fontSize: 13,
-        color: "#6C8BA3",
-        marginBottom: 5,
-    },
+  botao: {
+    backgroundColor: "#FF8915",
+    minHeight: 52,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
-    titulo: {
-        fontSize: 25,
-        fontWeight: "700",
-        color: "#6085A0",
-        marginBottom: 5,
-    },
+  botaoDesabilitado: {
+    opacity: 0.6,
+  },
 
-    subtitulo: {
-        fontSize: 13,
-        color: "#6C8BA3",
-    },
+  textoBotao: {
+    color: "#FFFFFF",
+    fontWeight: "700",
+    fontSize: 16,
+  },
+
+  erro: {
+    color: "#B13D3D",
+    textAlign: "center",
+    marginBottom: 12,
+    fontSize: 13,
+  },
 });
-
-
-
-//
-//usar replace inves de push, suas diferenças 
-//evita que o usuáriovolta à seleção de nível simplesmente pressionando o botão de voltar
