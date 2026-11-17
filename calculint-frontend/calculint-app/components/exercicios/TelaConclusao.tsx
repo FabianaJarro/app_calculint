@@ -29,7 +29,7 @@ export default function TelaConclusao({
       <View style={styles.conteudo}>
         <Image
           source={require(
-            "../../app/assets/exercicios/conclusao.png"
+            "../../app/assets/basico/conclusao.png"
           )}
           style={styles.imagem}
           resizeMode="contain"

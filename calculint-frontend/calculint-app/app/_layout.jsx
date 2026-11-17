@@ -98,9 +98,23 @@ export default function Layout() {
             />
             <Drawer.Screen
               name="progresso"
-              options={{ headerShown: false, drawerItemStyle: { display: "none" } }}
+              options={{
+                title: "Progresso",
+                headerShown: true,
+                drawerItemStyle: { display: "none" },
+              }}
+            />
+            <Drawer.Screen
+              name="cotidiano"
+              options={{
+                title: "Atividades do cotidiano",
+                drawerItemStyle: { display: "none" },
+              }}
             />
           </Drawer>
+
+            
+
         </GestureHandlerRootView>
       </AuthProvider>
     </QueryClientProvider>

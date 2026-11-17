@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { useAuth } from "../contexts/auth";
 import { useRouter } from "expo-router";
 
+import { Ionicons } from "@expo/vector-icons";
 
 export default function CalculintDrawerContent(props: DrawerContentComponentProps) {
   const { usuario } = useAuth();
@@ -76,6 +77,20 @@ export default function CalculintDrawerContent(props: DrawerContentComponentProp
             inactiveTintColor="#43566A"
             activeBackgroundColor="#FFF1E8"
             labelStyle={styles.label}
+          />
+          <DrawerItem
+            label="Progresso"
+            icon={({ color, size }) => (
+              <Ionicons
+                name="stats-chart-outline"
+                size={size}
+                color={color}
+              />
+            )}
+            onPress={() => {
+              props.navigation.closeDrawer();
+              router.push("/progresso");
+            }}
           />
 
 

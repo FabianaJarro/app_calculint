@@ -38,6 +38,17 @@ import TelaConclusao from "../components/exercicios/TelaConclusao";
 import { useEffect } from "react";
 import { api } from "../api";
 
+import VisualCotidiano, {
+    formatarMoeda,
+} from "../components/exercicios/VisualCotidiano";
+
+import VisualIntermediario, {
+    formatarDecimal,
+} from "../components/exercicios/VisualIntermediario";
+
+import IntroducaoIntermediario from "../components/exercicios/IntroducaoIntermediario";
+
+
 const nomesOperacoes: Record<string, string> = {
     adicao: "Adição",
     subtracao: "Subtração",
@@ -46,12 +57,18 @@ const nomesOperacoes: Record<string, string> = {
 };
 
 const IMAGENS: Record<string, ImageSourcePropType> = {
-    MACA: require("./assets/exercicios/maca.png"),
-    LAPIS: require("./assets/exercicios/lapis.png"),
-    FLOR: require("./assets/exercicios/flor.png"),
-    BOLINHA: require("./assets/exercicios/bolinha.png"),
+    MACA: require("./assets/basico/maca.png"),
+    LAPIS: require("./assets/basico/lapis.png"),
+    FLOR: require("./assets/basico/flor.png"),
+    BOLINHA: require("./assets/basico/bolinha.png"),
 };
 
+const titulosCotidiano: Record<string, string> = {
+    dinheiro: "Dinheiro",
+    troco: "Dinheiro e troco",
+    medidas: "Medidas",
+    compras: "Compras e troco",
+};
 
 export default function TelaExercicio() {
     const router = useRouter();
@@ -194,11 +211,14 @@ export default function TelaExercicio() {
         );
     }
 
-    if (introducao) {
+    if (
+        introducao &&
+        nivel === "INTERMEDIARIO" &&
+        (operacao === "adicao" || operacao === "subtracao")
+    ) {
         return (
-            <IntroducaoExercicio
+            <IntroducaoIntermediario
                 operacao={operacao}
-                modulo={modulo}
                 onContinuar={() => setIntroducao(false)}
             />
         );
@@ -238,17 +258,19 @@ export default function TelaExercicio() {
             </View>
 
             <Text style={styles.titulo}>
-                {nivel === "BASICO" && operacao === "subtracao"
-                    ? "Retirando objetos"
-                    : nivel === "BASICO" && operacao === "adicao"
-                        ? modulo === "reta"
-                            ? "Reta numérica"
-                            : modulo === "completar10"
-                                ? "Completando 10"
-                                : modulo === "dezenas"
-                                    ? "Dezenas e unidades"
-                                    : "Soma com objetos"
-                        : nomesOperacoes[operacao] ?? "Exercício"}
+                {operacao === "cotidiano"
+                    ? titulosCotidiano[modulo] ?? "Atividades do cotidiano"
+                    : nivel === "BASICO" && operacao === "subtracao"
+                        ? "Retirando objetos"
+                        : nivel === "BASICO" && operacao === "adicao"
+                            ? modulo === "reta"
+                                ? "Reta numérica"
+                                : modulo === "completar10"
+                                    ? "Completando 10"
+                                    : modulo === "dezenas"
+                                        ? "Dezenas e unidades"
+                                        : "Soma com objetos"
+                            : nomesOperacoes[operacao] ?? "Exercício"}
             </Text>
 
             <Text style={styles.descricao}>Observe e responda:</Text>
@@ -258,9 +280,21 @@ export default function TelaExercicio() {
             </Text>
 
 
-
-
-            {exercicio.objeto === "DEZENAS" ? (
+            {nivel === "INTERMEDIARIO" &&
+                (operacao === "adicao" || operacao === "subtracao") ? (
+                <VisualIntermediario
+                    tipo={exercicio.objeto}
+                    numero1={exercicio.numero1}
+                    numero2={exercicio.numero2}
+                    simbolo={exercicio.simbolo}
+                />
+            ) : operacao === "cotidiano" ? (
+                <VisualCotidiano
+                    modulo={modulo}
+                    numero1={exercicio.numero1}
+                    numero2={exercicio.numero2}
+                />
+            ) : exercicio.objeto === "DEZENAS" ? (
                 <DezenasVisual
                     numero1={exercicio.numero1}
                     numero2={exercicio.numero2}
@@ -306,8 +340,6 @@ export default function TelaExercicio() {
             )}
 
 
-
-
             <Text style={styles.instrucao}>
                 Escolha uma resposta:
             </Text>
@@ -339,7 +371,16 @@ export default function TelaExercicio() {
                             />
 
                             <Text style={styles.numeroAlternativa}>
-                                {alternativa}
+                                {nivel === "INTERMEDIARIO" &&
+                                    (operacao === "adicao" || operacao === "subtracao")
+                                    ? exercicio.objeto === "DINHEIRO_DECIMAL"
+                                        ? formatarMoeda(alternativa)
+                                        : formatarDecimal(alternativa)
+                                    : operacao === "cotidiano"
+                                        ? modulo === "medidas"
+                                            ? `${alternativa} mL`
+                                            : formatarMoeda(alternativa)
+                                        : alternativa}
                             </Text>
                         </Pressable>
                     );

@@ -26,8 +26,8 @@ export default function TelaFeedback({
         <Image
           source={
             acertou
-              ? require("../../app/assets/exercicios/feedback-acerto.png")
-              : require("../../app/assets/exercicios/feedback-erro.png")
+              ? require("../../app/assets/basico/feedback-acerto.png")
+              : require("../../app/assets/basico/feedback-erro.png")
           }
           style={styles.imagem}
           resizeMode="contain"

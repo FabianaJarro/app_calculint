@@ -12,11 +12,11 @@ type Props = {
 };
 
 const imagemDezena = require(
-  "../../app/assets/exercicios/dezena.png"
+  "../../app/assets/basico/dezena.png"
 );
 
 const imagemUnidade = require(
-  "../../app/assets/exercicios/unidade.png"
+  "../../app/assets/basico/unidade.png"
 );
 
 function NumeroVisual({ valor }: { valor: number }) {

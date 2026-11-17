@@ -12,7 +12,7 @@ type Props = {
 
 const TOTAL = 10;
 
-const bolinha = require("../../app/assets/exercicios/bolinha.png");
+const bolinha = require("../../app/assets/basico/bolinha.png");
 
 export default function QuadroDez({
   preenchidos,

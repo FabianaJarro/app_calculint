@@ -10,14 +10,23 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+
 @Service
 public class ExercicioService {
 
     private final Random random = new Random();
     private final GeradorBasico geradorBasico;
+    private final GeradorCotidiano geradorCotidiano;
+    private final GeradorIntermediario geradorIntermediario;
 
-    public ExercicioService(GeradorBasico geradorBasico) {
+    public ExercicioService(
+            GeradorBasico geradorBasico,
+            GeradorCotidiano geradorCotidiano,
+            GeradorIntermediario geradorIntermediario
+    ) {
         this.geradorBasico = geradorBasico;
+        this.geradorCotidiano = geradorCotidiano;
+        this.geradorIntermediario = geradorIntermediario;
     }
 
     public int gerarNumero(int minimo, int maximo) {
@@ -30,6 +39,24 @@ public class ExercicioService {
             String modulo
     ) {
         String op = operacao.toLowerCase(Locale.ROOT);
+
+        if (op.equals("cotidiano")) {
+            if (nivel != Nivel.AVANCADO) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Atividades do cotidiano exigem nível avançado"
+                );
+            }
+
+            return geradorCotidiano.gerar(modulo);
+        }
+
+        if (
+                nivel == Nivel.INTERMEDIARIO &&
+                        (op.equals("adicao") || op.equals("subtracao"))
+        ) {
+            return geradorIntermediario.gerar(op);
+        }
 
         if (!Set.of(
                 "adicao", "subtracao",
@@ -329,6 +356,8 @@ public class ExercicioService {
                 )
         );
     }
+
+
 
 
 }

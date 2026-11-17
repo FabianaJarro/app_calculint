@@ -36,7 +36,7 @@ const IMAGENS_OPERACOES: Record<
   revisao: require("./assets/operacoes/revisao.png"),
 };
 
-type ModuloId = "objetos" | "reta" | "completar10"| "dezenas";
+type ModuloId = "objetos" | "reta" | "completar10" | "dezenas";
 
 const operacoes: {
   id: OperacaoId;
@@ -191,6 +191,22 @@ export default function Operacoes() {
       </View>
 
       <View style={styles.lista}>
+
+        {nivel === "AVANCADO" && (
+          <Pressable
+            style={styles.botaoCotidiano}
+            onPress={() => router.push("/cotidiano")}
+          >
+            <Text style={styles.textoCotidiano}>
+              Atividades do cotidiano
+            </Text>
+
+            <Text style={styles.subtextoCotidiano}>
+              Dinheiro, medidas e compras ›
+            </Text>
+          </Pressable>
+        )}
+
         {operacoes.map((operacao, index) => {
           const mostrarAdicao =
             operacao.id === "adicao" &&
@@ -415,5 +431,27 @@ const styles = StyleSheet.create({
     width: 118,
     height: 107,
   },
+
+
+  botaoCotidiano: {
+    backgroundColor: "#D9F2E8",
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 28,
+    alignItems: "center",
+  },
+
+  textoCotidiano: {
+    color: "#175D51",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+
+  subtextoCotidiano: {
+    color: "#5D8278",
+    fontSize: 13,
+    marginTop: 6,
+  },
+
 
 });
