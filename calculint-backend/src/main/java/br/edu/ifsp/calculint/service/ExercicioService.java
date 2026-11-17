@@ -93,6 +93,29 @@ public class ExercicioService {
             if (op.equals("subtracao")) {
                 return geradorBasico.subtracaoObjetos();
             }
+
+
+            if (op.equals("multiplicacao")) {
+
+                String moduloAtual =
+                        modulo == null || modulo.isBlank()
+                                ? "grupos"
+                                : modulo;
+
+                return switch (moduloAtual) {
+
+                    case "grupos" ->
+                            geradorBasico.multiplicacaoGrupos();
+
+                    default -> throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Módulo de multiplicação inválido"
+                    );
+                };
+            }
+
+
+
         }
 
 

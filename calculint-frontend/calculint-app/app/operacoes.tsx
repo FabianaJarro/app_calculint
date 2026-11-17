@@ -109,6 +109,35 @@ const conjuntos: {
     },
   ];
 
+
+const conjuntosMultiplicacao = [
+  {
+    numero: "1/4",
+    nome: "Grupos iguais",
+    modulo: "grupos",
+    disponivel: true,
+  },
+  {
+    numero: "2/4",
+    nome: "Adição repetida",
+    modulo: "adicao_repetida",
+    disponivel: false,
+  },
+  {
+    numero: "3/4",
+    nome: "Linhas e colunas",
+    modulo: "linhas_colunas",
+    disponivel: false,
+  },
+  {
+    numero: "4/4",
+    nome: "Sequências",
+    modulo: "sequencia",
+    disponivel: false,
+  },
+] as const;
+
+
 export default function Operacoes() {
   const router = useRouter();
   const { usuario } = useAuth();
@@ -129,11 +158,26 @@ export default function Operacoes() {
   const [etapaAdicao, setEtapaAdicao] =
     useState<0 | 1 | 2>(0);
 
+  const [etapaMultiplicacao, setEtapaMultiplicacao] =
+    useState<0 | 1 | 2>(0);
+
   function selecionarOperacao(id: OperacaoId) {
     if (!nivel) {
       router.replace("/selecionar_nivel");
       return;
     }
+
+
+    if (id === "multiplicacao" && nivel === "BASICO") {
+      setEtapaMultiplicacao((anterior) => {
+        if (anterior === 0) return 1;
+        if (anterior === 1) return 2;
+        return 0;
+      });
+
+      return;
+    }
+
 
     if (id === "revisao") {
       router.push("/em-breve");
@@ -264,7 +308,7 @@ export default function Operacoes() {
                 </Pressable>
               )}
 
-              {/* Segundo clique: lista dos conjuntos */}
+              {/* segundo clique: lista dos conjuntos */}
               {mostrarAdicao && etapaAdicao === 2 && (
                 <View style={styles.conjuntos}>
                   {conjuntos.map((conjunto) => {
@@ -300,6 +344,67 @@ export default function Operacoes() {
                   })}
                 </View>
               )}
+
+
+              {operacao.id === "multiplicacao" &&
+                nivel === "BASICO" &&
+                etapaMultiplicacao >= 1 && (
+                  <Pressable
+                    style={styles.indicador}
+                    onPress={() => setEtapaMultiplicacao(2)}
+                  >
+                    <Text style={styles.numeroIndicador}>
+                      1/4
+                    </Text>
+
+                    {etapaMultiplicacao === 1 && (
+                      <Text style={styles.dica}>
+                        Toque novamente para ver os conjuntos
+                      </Text>
+                    )}
+                  </Pressable>
+                )}
+
+              {operacao.id === "multiplicacao" &&
+                nivel === "BASICO" &&
+                etapaMultiplicacao === 2 && (
+                  <View style={styles.conjuntos}>
+                    {conjuntosMultiplicacao.map((conjunto) => (
+                      <Pressable
+                        key={conjunto.modulo}
+                        disabled={!conjunto.disponivel}
+                        style={styles.linhaConjunto}
+                        onPress={() => {
+                          if (!nivel) return;
+
+                          router.push({
+                            pathname: "/exercicio",
+                            params: {
+                              nivel,
+                              operacao: "multiplicacao",
+                              modulo: conjunto.modulo,
+                            },
+                          });
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.textoConjunto,
+                            !conjunto.disponivel &&
+                            styles.textoDesabilitado,
+                          ]}
+                        >
+                          {conjunto.numero} — {conjunto.nome}
+                        </Text>
+
+                        <Text style={styles.seta}>
+                          {conjunto.disponivel ? "›" : "Em breve"}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                )}
+
             </View>
           );
         })}

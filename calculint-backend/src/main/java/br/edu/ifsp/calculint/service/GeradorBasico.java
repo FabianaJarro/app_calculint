@@ -205,4 +205,37 @@ public class GeradorBasico {
         return lista;
     }
 
+
+    // MULTIPLICAÇÃO - 1/4: GRUPOS IGUAIS
+    public List<ExercicioGeradoDTO> multiplicacaoGrupos() {
+
+        List<ExercicioGeradoDTO> lista = new ArrayList<>();
+
+        for (int i = 0; i < 4; i++) {
+
+            int grupos = numero(2, 4);
+            int objetosPorGrupo = numero(2, 4);
+
+            int resposta = grupos * objetosPorGrupo;
+
+            String pergunta =
+                    "Há " + grupos + " grupos com " +
+                            objetosPorGrupo + " objetos em cada. " +
+                            "Quantos objetos existem ao todo?";
+
+            lista.add(new ExercicioGeradoDTO(
+                    pergunta,
+                    grupos,
+                    objetosPorGrupo,
+                    "×",
+                    "MULT_GRUPOS",
+                    alternativas(resposta),
+                    resposta
+            ));
+        }
+
+        return lista;
+    }
+
+
 }

@@ -48,6 +48,8 @@ import VisualIntermediario, {
 
 import IntroducaoIntermediario from "../components/exercicios/IntroducaoIntermediario";
 
+import VisualMultiplicacao from "../components/exercicios/VisualMultiplicacao";
+
 
 const nomesOperacoes: Record<string, string> = {
     adicao: "Adição",
@@ -280,7 +282,12 @@ export default function TelaExercicio() {
             </Text>
 
 
-            {nivel === "INTERMEDIARIO" &&
+            {exercicio.objeto === "MULT_GRUPOS" ? (
+                <VisualMultiplicacao
+                    grupos={exercicio.numero1}
+                    objetosPorGrupo={exercicio.numero2}
+                />
+            ) : nivel === "INTERMEDIARIO" &&
                 (operacao === "adicao" || operacao === "subtracao") ? (
                 <VisualIntermediario
                     tipo={exercicio.objeto}
