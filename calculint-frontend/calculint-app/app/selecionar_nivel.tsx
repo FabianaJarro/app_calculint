@@ -46,7 +46,7 @@ export default function SelecionarNivel() {
     const [salvando, setSalvando] = useState(false);
     const [erro, setErro] = useState("");
 
-    // Se já existe um nível salvo, deixa ele selecionado.
+    //
     useEffect(() => {
         const atual = usuario?.nivelAtual;
 
@@ -66,7 +66,7 @@ export default function SelecionarNivel() {
         setErro("");
 
         try {
-            // Salva no backend e atualiza o contexto.
+            //
             await atualizarNivel(nivelSelecionado);
 
             if (nivelSelecionado === "AVANCADO") {

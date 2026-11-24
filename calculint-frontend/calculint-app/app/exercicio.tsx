@@ -199,7 +199,6 @@ export default function TelaExercicio() {
         );
     }
 
-    // INTRODUÇÃO: DEZENAS E UNIDADES
     if (
         introducao &&
         nivel === "BASICO" &&

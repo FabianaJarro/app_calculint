@@ -36,7 +36,7 @@ public class GeradorBasico {
         return opcoes;
     }
 
-    // 1. ADIÇÃO COM OBJETOS
+    // adição
     public List<ExercicioGeradoDTO> adicaoObjetos() {
         String[] objetos = {
                 "MACA", "LAPIS", "FLOR", "BOLINHA"
@@ -67,7 +67,7 @@ public class GeradorBasico {
         return lista;
     }
 
-    // 2. ADIÇÃO NA RETA NUMÉRICA
+    // adição
     public List<ExercicioGeradoDTO> adicaoReta() {
         List<ExercicioGeradoDTO> lista = new ArrayList<>();
 

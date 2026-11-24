@@ -169,7 +169,6 @@ export default function Operacoes() {
       return;
     }
 
-    // Adição básica possui conjuntos próprios
     if (id === "adicao" && nivel === "BASICO") {
       setEtapaAdicao((anterior) => {
         if (anterior === 0) return 1;
@@ -180,7 +179,6 @@ export default function Operacoes() {
       return;
     }
 
-    // Demais operações utilizam o fluxo existente
     router.push({
       pathname: "/exercicio",
       params: {
@@ -273,7 +271,7 @@ export default function Operacoes() {
                 {operacao.nome}
               </Text>
 
-              {/* Primeiro clique: indicador 1/4 */}
+              {/* primeiro clique*/}
               {mostrarAdicao && etapaAdicao >= 1 && (
                 <Pressable
                   onPress={() => setEtapaAdicao(2)}
@@ -293,7 +291,7 @@ export default function Operacoes() {
                 </Pressable>
               )}
 
-              {/* segundo clique: lista dos conjuntos */}
+              {/*segundo clique*/}
               {mostrarAdicao && etapaAdicao === 2 && (
                 <View style={styles.conjuntos}>
                   {conjuntos.map((conjunto) => {
